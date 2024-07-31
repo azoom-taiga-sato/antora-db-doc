@@ -1,0 +1,21 @@
+name: Update Version
+
+on:
+  workflow_dispatch:
+    inputs:
+      new_version:
+        description: 'New version to set'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get version from package.json
+        id: get_version
+        run: |
+          VERSION=$(jq -r '.version' package.json)
+          echo "Version: $VERSION"
