@@ -1,6 +1,6 @@
 name: antora-db-doc
 title: Component ABCA
-version: 0.6
+version: 0.7
 prerelease: -beta.1
 nav:
 - modules/ROOT/nav.adoc
