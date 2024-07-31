@@ -1,8 +1,8 @@
-name: ci
+name: Update version and tag
 on:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - main
 permissions:
   contents: write
 jobs:
@@ -12,29 +12,31 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Get the tag name
-        id: get_tag
+      - name: Get version from package.json
+        id: get_version
         run: |
-          TAG=$(git describe --tags)
-          if [ -z "$TAG" ]; then
-            echo "No tags found. Exiting."
-            exit 1
-          fi
-          echo "::set-output name=tag::$TAG"
+          VERSION=$(jq -r '.version' package.json)
+          echo "::set-output name=version::$VERSION"
 
       - name: Update antora.yml version
         run: |
-          TAG=${{ steps.get_tag.outputs.tag }}
-          sed -i "s/^version: .*/version: ${TAG}/" docs/antora.yml
+          VERSION=${{ steps.get_version.outputs.version }}
+          sed -i "s/^version: .*/version: ${VERSION}/" docs/antora.yml
 
       - name: Commit changes
         run: |
-          TAG=${{ steps.get_tag.outputs.tag }}
+          VERSION=${{ steps.get_version.outputs.version }}
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add docs/antora.yml
-          git commit -m "Update version to ${TAG}"
+          git commit -m "Update version to ${VERSION}"
 
       - name: Push changes
         run: |
           git push origin HEAD:refs/heads/main
+
+      - name: Create and push tag
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          git tag v$VERSION
+          git push origin v$VERSION
