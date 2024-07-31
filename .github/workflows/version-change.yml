@@ -15,7 +15,7 @@ jobs:
       - name: Update antora.yml version
         run: |
           TAG=$(git describe --tags)
-          sed -i "s/^version: .*/version: ${TAG}/" antora-db-doc/docs/antora.yml
+          sed -i "s/^version: .*/version: ${TAG}/" docs/antora.yml
 
       - name: Commit changes
         run: |
