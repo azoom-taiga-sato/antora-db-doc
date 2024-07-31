@@ -12,3 +12,11 @@ https://webclass.jp/blog/2022/08/23/asciidoc-%E3%81%A8-antora-%E3%81%A7%E3%83%9E
 https://github.com/squidfunk/mkdocs-material/discussions/3439
 
 https://copier.readthedocs.io/en/v5.0.0/
+
+
+https://qiita.com/sky_y/items/80bcd0f353ef5b8980ee
+
+
+
+
+pandoc tbls/dbdoc/attribute.md -f markdown -t asciidoc -o docs/modules/dbdoc/pages/attribute.adoc
