@@ -21,21 +21,9 @@ jobs:
         run: |
           git config --global user.name 'github-actions[bot]'
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add antora-db-doc/docs/antora.yml
+          git add docs/antora.yml
           git commit -m "Update version to ${TAG}"
 
       - name: Push changes
         run: |
           git push origin HEAD
-
-      - name: Install Antora
-        run: npm install -g @antora/cli @antora/site-generator-default
-
-      - name: Build Documentation
-        run: antora site.yml
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./public
