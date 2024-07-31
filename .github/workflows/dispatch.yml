@@ -6,9 +6,6 @@ on:
       new_version:
         description: 'New version to set'
         required: true
-      branch:
-        description: 'Branch to push the changes'
-        required: true
 
 jobs:
   build:
@@ -33,14 +30,6 @@ jobs:
             exit 1
           fi
 
-      - name: Check if branch exists
-        id: check_branch
-        run: |
-          if ! git ls-remote --exit-code --heads origin ${{ github.event.inputs.branch }}; then
-            echo "Branch ${{ github.event.inputs.branch }} does not exist."
-            exit 1
-          fi
-
       - name: Update version in antora.yml
         run: |
           sed -i 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora.yml
@@ -56,5 +45,5 @@ jobs:
           git add docs/antora.yml package.json package-lock.json
           git commit -m "Update version to ${{ github.event.inputs.new_version }}"
           git tag ${{ github.event.inputs.new_version }}
-          git push origin ${{ github.event.inputs.branch }} ${{ github.event.inputs.new_version }}
-          git push origin HEAD:${{ github.event.inputs.branch }}
+          git push origin ${{ github.ref_name }} ${{ github.event.inputs.new_version }}
+          git push origin HEAD:${{ github.ref_name }}
