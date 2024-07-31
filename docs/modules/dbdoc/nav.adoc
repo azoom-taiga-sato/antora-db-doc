@@ -1,1 +1,2 @@
 * xref:test.adoc[]
+* xref:attribute.adoc[]
