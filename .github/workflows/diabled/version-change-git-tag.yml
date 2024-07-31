@@ -1,0 +1,40 @@
+name: ci
+on:
+  push:
+    tags:
+      - 'v*'
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Get the tag name
+        id: get_tag
+        run: |
+          TAG=$(git describe --tags)
+          if [ -z "$TAG" ]; then
+            echo "No tags found. Exiting."
+            exit 1
+          fi
+          echo "::set-output name=tag::$TAG"
+
+      - name: Update antora.yml version
+        run: |
+          TAG=${{ steps.get_tag.outputs.tag }}
+          sed -i "s/^version: .*/version: ${TAG}/" docs/antora.yml
+
+      - name: Commit changes
+        run: |
+          TAG=${{ steps.get_tag.outputs.tag }}
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add docs/antora.yml
+          git commit -m "Update version to ${TAG}"
+
+      - name: Push changes
+        run: |
+          git push origin HEAD:refs/heads/main
