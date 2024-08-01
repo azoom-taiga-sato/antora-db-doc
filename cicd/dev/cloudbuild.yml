@@ -1,0 +1,63 @@
+steps:
+  # - id: tbls-doc-creation
+  #   name: 'ghcr.io/k1low/tbls'
+  #   args:
+  #       - '-c' 
+  #       - | 
+  #       tbls doc 'mysql://root:@localhost:3306/tbls_demo_box'
+
+#   - id: build-docker-image
+#     name: 'gcr.io/cloud-builders/docker'
+#     args: ['build', '-t', 'gcr.io/$PROJECT_ID/pandoc-converter', '.']
+
+#   - id: convert-md-asciidoc
+#     name: 'gcr.io/$PROJECT_ID/pandoc-converter'
+#     entrypoint: 'bash'
+#     args:
+#       - '-c'
+#       - |
+#         mkdir -p docs/modules/dbdoc/pages
+#         for file in tbls/dbdoc/*.md; do
+#           base=$(basename "$file" .md)
+#           pandoc "$file" -o "docs/modules/dbdoc/pages/${base}.adoc"
+#           cp "tbls/dbdoc/${base}.svg" "docs/modules/dbdoc/pages/"
+#         done
+
+# images:
+#   - 'gcr.io/$PROJECT_ID/pandoc-converter'
+
+- id: antora-doc-creation
+  name: 'antora/antora'
+  args: 
+    - -c
+    - |
+      antora --fetch antora-playbook.yml
+
+# docker run --rm --platform linux/amd64 -v $PWD:/work -w /work antora/antora antora --fetch antora-playbook.yml
+
+  - id: build
+    name: 'gcr.io/kaniko-project/executor:v1.6.0'
+    args:
+      - --dockerfile=./cicd/dev/Dockerfile
+      - --destination=gcr.io/azoom-taiga-satou/${_APP_NAME}
+
+# docker build -t my-express-app .
+# docker run -p 3000:3000 my-express-app
+
+  - id: "deploy"
+    name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud beta run deploy ${_APP_NAME} \
+          --platform managed \
+          --region asia-northeast1 \
+          --allow-unauthenticated \
+          --image gcr.io/${PROJECT_ID}/${_APP_NAME} \
+          --set-env-vars INSTANCE-CONNECTION-NAME="${_INSTANCE_CONNECTION_NAME}"
+substitutions:
+  _APP_NAME: antora-db-doc
+timeout: 900s
+options:
+ machineType: 'N1_HIGHCPU_8'

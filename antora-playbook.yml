@@ -5,9 +5,9 @@ site:
   start_page: antora-db-doc::index.adoc
 content:
   sources:
-  - url: https://github.com/azoom-taiga-sato/antora-db-doc.git
-    tags: [1.4.9]
-    branches: ~
+  - url: ./
+    # tags: [1.4.9]
+    # branches: ~
     # branches: [main]
     # tags: v.*
     start_path: docs
@@ -23,4 +23,4 @@ ui:
     url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/HEAD/raw/build/ui-bundle.zip?job=bundle-stable
     snapshot: true
 output:
-  dir: ./docs
+  dir: ./outputs

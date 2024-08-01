@@ -13,11 +13,7 @@
     "type": "git",
     "url": "git+https://github.com/azoom-taiga-sato/antora-db-doc.git"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/azoom-taiga-sato/antora-db-doc/issues"
-  },
-  "homepage": "https://github.com/azoom-taiga-sato/antora-db-doc#readme"
+  "dependencies": {
+    "express": "^4.17.1"
+  }
 }
