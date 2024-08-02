@@ -1,1 +1,3 @@
 * xref:test.adoc[]
+* xref:aaa.adoc[]
+* xref:user.adoc[]

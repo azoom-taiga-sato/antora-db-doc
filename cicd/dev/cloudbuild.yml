@@ -6,25 +6,43 @@ steps:
   #       - | 
   #       tbls doc 'mysql://root:@localhost:3306/tbls_demo_box'
 
-#   - id: build-docker-image
-#     name: 'gcr.io/cloud-builders/docker'
-#     args: ['build', '-t', 'gcr.io/$PROJECT_ID/pandoc-converter', '.']
+  steps:
+    - id: build-docker-image
+      name: 'gcr.io/cloud-builders/docker'
+      args: ['build', '-t', 'gcr.io/$PROJECT_ID/pandoc-converter', '-f', './cicd/dev/Dockerfile', '.']
 
-#   - id: convert-md-asciidoc
-#     name: 'gcr.io/$PROJECT_ID/pandoc-converter'
-#     entrypoint: 'bash'
-#     args:
-#       - '-c'
-#       - |
-#         mkdir -p docs/modules/dbdoc/pages
-#         for file in tbls/dbdoc/*.md; do
-#           base=$(basename "$file" .md)
-#           pandoc "$file" -o "docs/modules/dbdoc/pages/${base}.adoc"
-#           cp "tbls/dbdoc/${base}.svg" "docs/modules/dbdoc/pages/"
-#         done
+    - id: convert-md-asciidoc
+      name: 'gcr.io/$PROJECT_ID/pandoc-converter'
+      entrypoint: 'bash'
+      args:
+        - '-c'
+        - |
+          BASE_DIR="tbls/dbdoc"
+          OUTPUT_DIR="docs/modules/dbdoc/pages"
 
-# images:
-#   - 'gcr.io/$PROJECT_ID/pandoc-converter'
+          mkdir -p $OUTPUT_DIR
+
+          find $BASE_DIR -name "*.md" | while read md_file; do
+              adoc_file="${OUTPUT_DIR}/$(basename "${md_file%.md}.adoc")"
+
+              pandoc "$md_file" -o "$adoc_file"
+
+              grep -o '!\[.*\](.*\.svg)' "$md_file" | sed -E 's/!\[.*\]\((.*\.svg)\)/\1/' | while read svg_path; do
+                  svg_path_relative=$(basename "$svg_path")
+
+                  echo "コピー元: ${BASE_DIR}/${svg_path_relative}"
+                  echo "コピー先: ${OUTPUT_DIR}/${svg_path_relative}"
+
+                  cp "${BASE_DIR}/${svg_path_relative}" "${OUTPUT_DIR}/${svg_path_relative}"
+
+                  echo "置換対象: ${svg_path} -> ${svg_path_relative}"
+
+                  sed -i "s|${svg_path}|${svg_path_relative}|g" "$adoc_file"
+              done
+          done
+
+# chmod +x convert_md_to_adoc.sh
+# ./convert_md_to_adoc.sh
 
   - id: antora-doc-creation
     name: 'antora/antora'
@@ -34,28 +52,30 @@ steps:
 # docker run --rm --platform linux/amd64 -v $PWD:/work -w /work antora/antora antora --fetch antora-playbook.yml
 
   - id: build
-    name: 'gcr.io/kaniko-project/executor:v1.6.0'
+    name: 'gcr.io/kaniko-project/executor:latest'
     args:
       - --dockerfile=./cicd/dev/Dockerfile
-      - --destination=gcr.io/${PROJECT_ID}/${_APP_NAME}
+      - --destination=gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}
+      - --cache=false
 
-# docker build -t my-express-app .
-# docker run -p 3000:3000 my-express-app
+# docker build -t test -f ./cicd/dev/Dockerfile .
+# docker run -p 3000:3000 test
 
-- id: "deploy"
-  name: gcr.io/cloud-builders/gcloud
-  entrypoint: bash
-  args:
-    - -c
-    - |
-      gcloud beta run deploy ${_APP_NAME} \
-        --platform managed \
-        --region asia-northeast1 \
-        --allow-unauthenticated \
-        --image gcr.io/${PROJECT_ID}/${_APP_NAME} \
+  - id: "deploy"
+    name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud beta run deploy ${_APP_NAME} \
+          --platform managed \
+          --region asia-northeast1 \
+          --allow-unauthenticated \
+          --image gcr.io/${PROJECT_ID}/${_APP_NAME} \
 
 substitutions:
   _APP_NAME: antora-db-doc
+  _TAG_NAME: latest
 timeout: 900s
 options:
   logging: CLOUD_LOGGING_ONLY
