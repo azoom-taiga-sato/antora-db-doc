@@ -70,7 +70,6 @@ steps:
     args:
       - --dockerfile=./cicd/dev/Dockerfile
       - --destination=gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}
-      - --cache=false
 
 # docker build -t test -f ./cicd/dev/Dockerfile .
 # docker run -p 3000:3000 test
