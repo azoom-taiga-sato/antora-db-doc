@@ -10,50 +10,50 @@ steps:
     name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t', 'gcr.io/$PROJECT_ID/pandoc-converter', '-f', './cicd/dev/Dockerfile', '.']
 
-  # - id: convert-md-asciidoc
-  #   name: 'gcr.io/$PROJECT_ID/pandoc-converter'
-  #   entrypoint: 'bash'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       mkdir -p "${_ADOC_DIR}"
-  #       mkdir -p "${_IMAGE_DIR}"
+  - id: convert-md-asciidoc
+    name: 'gcr.io/$PROJECT_ID/pandoc-converter'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        mkdir -p "${_ADOC_DIR}"
+        mkdir -p "${_IMAGE_DIR}"
 
-  #       echo "" > "${_NAV_FILE}"
+        echo "" > "${_NAV_FILE}"
 
-  #       find $BASE_DIR -name "__drizzle_migrations.md" -exec mv {} "${_BASE_DIR}/drizzle_migrations.md" \;
-  #       find $BASE_DIR -name "__drizzle_migrations.svg" -exec mv {} "${_BASE_DIR}/drizzle_migrations.svg" \;
+        find $BASE_DIR -name "__drizzle_migrations.md" -exec mv {} "${_BASE_DIR}/drizzle_migrations.md" \;
+        find $BASE_DIR -name "__drizzle_migrations.svg" -exec mv {} "${_BASE_DIR}/drizzle_migrations.svg" \;
 
-  #       find $BASE_DIR -type f -exec sed -i '' 's/__drizzle_migrations/drizzle_migrations/g' {} +
+        find $BASE_DIR -type f -exec sed -i '' 's/__drizzle_migrations/drizzle_migrations/g' {} +
 
-  #       find $BASE_DIR -name "*.md" | while read md_file; do
-  #         adoc_file="${_ADOC_DIR}/$(basename "${md_file%.md}.adoc")"
+        find $BASE_DIR -name "*.md" | while read md_file; do
+          adoc_file="${_ADOC_DIR}/$(basename "${md_file%.md}.adoc")"
 
-  #         if grep -q '.md' "${md_file}"; then
-  #           sed -i '' 's/\.md/\.html/g' "${md_file}"
-  #           echo "md文字列あり"
-  #         fi
+          if grep -q '.md' "${md_file}"; then
+            sed -i '' 's/\.md/\.html/g' "${md_file}"
+            echo "md文字列あり"
+          fi
 
-  #         docker run --rm -v "$(pwd)":/source pandoc/core -f markdown -t asciidoc -o "/source/${adoc_file}" "/source/${md_file}"
+          docker run --rm -v "$(pwd)":/source pandoc/core -f markdown -t asciidoc -o "/source/${adoc_file}" "/source/${md_file}"
 
-  #         if [ "$(basename "${adoc_file}")" = "README.adoc" ]; then
-  #           sed -i '' '1s/^/= tbls Overview\n\n/' "${adoc_file}"
-  #           echo "README.adocに'tbls Overview'を追加しました"
-  #           # nav.adocにREADME.adocを先頭に追加
-  #           sed -i '' '1s/^/* xref:README.adoc[]/' "${NAV_FILE}"
-  #         else
-  #           echo "** xref:$(basename "${adoc_file}")[]" >> "${NAV_FILE}"
-  #         fi
+          if [ "$(basename "${adoc_file}")" = "README.adoc" ]; then
+            sed -i '' '1s/^/= tbls Overview\n\n/' "${adoc_file}"
+            echo "README.adocに'tbls Overview'を追加しました"
+            # nav.adocにREADME.adocを先頭に追加
+            sed -i '' '1s/^/* xref:README.adoc[]/' "${NAV_FILE}"
+          else
+            echo "** xref:$(basename "${adoc_file}")[]" >> "${NAV_FILE}"
+          fi
 
-  #         grep -o '!\[.*\](.*\.svg)' "${md_file}" | sed -E 's/!\[.*\]\((.*\.svg)\)/\1/' | while read svg_path; do
-  #           svg_path_relative=$(basename "${svg_path}")
+          grep -o '!\[.*\](.*\.svg)' "${md_file}" | sed -E 's/!\[.*\]\((.*\.svg)\)/\1/' | while read svg_path; do
+            svg_path_relative=$(basename "${svg_path}")
             
-  #           echo "コピー元: ${BASE_DIR}/${svg_path_relative}"
-  #           echo "コピー先: ${IMAGE_DIR}/${svg_path_relative}"
+            echo "コピー元: ${BASE_DIR}/${svg_path_relative}"
+            echo "コピー先: ${IMAGE_DIR}/${svg_path_relative}"
             
-  #           cp "${BASE_DIR}/${svg_path_relative}" "${IMAGE_DIR}/${svg_path_relative}"
-  #         done
-  #       done
+            cp "${BASE_DIR}/${svg_path_relative}" "${IMAGE_DIR}/${svg_path_relative}"
+          done
+        done
 
 # chmod +x convert_md_to_adoc.sh
 # ./convert-tbls-doc.sh
