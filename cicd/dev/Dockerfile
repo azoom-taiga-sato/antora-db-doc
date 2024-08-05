@@ -4,5 +4,5 @@ RUN npm install -g pnpm
 WORKDIR /app
 COPY package.json server.js /app/
 RUN pnpm install
-COPY public/ /app/outputs/
+COPY outputs/ /app/outputs/
 ENTRYPOINT ["node", "server.js"]
