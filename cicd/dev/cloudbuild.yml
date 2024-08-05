@@ -1,4 +1,43 @@
 steps:
+  - id: prepare-socket-folder
+    name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - |
+        mkdir /cloudsql || true
+        chmod -R 777 /cloudsql
+    entrypoint: bash
+    volumes:
+      - name: cloudsql
+        path: /cloudsql
+  - id: start-cloudsql-proxy
+    name: '${_CLOUD_SQL_PROXY_IMAGE_NAME}'
+    args:
+      - /cloud_sql_proxy
+      - '-dir=/cloudsql'
+      - '-instances=${_CLOUD_SQL_INSTANCES}'
+    waitFor:
+      - prepare-socket-folder
+    volumes:
+      - name: cloudsql
+        path: /cloudsql
+  - id: migrate-database
+    name: 'gcr.io/cloud-builders/yarn:node-20.11.0'
+    env:
+      - >-
+        DATABASE_URL=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/$_CLOUD_SQL_INSTANCES
+    args:
+      - '-c'
+      - >
+        mv package.json package.json.bak && echo '{"dependencies":
+        {"drizzle-orm": "0.31.2","drizzle-kit": "0.22.8","mysql2": "3.9.6"}}' >
+        package.json && yarn && yarn drizzle-kit migrate
+    waitFor:
+      - prepare-socket-folder
+    entrypoint: bash
+    volumes:
+      - name: cloudsql
+        path: /cloudsql
   # - id: tbls-doc-creation
   #   name: 'ghcr.io/k1low/tbls'
   #   args:
@@ -13,47 +52,14 @@ steps:
   - id: convert-md-asciidoc
     name: 'gcr.io/$PROJECT_ID/pandoc-converter'
     entrypoint: 'bash'
+    env: 
+      - 'PANDOC_INPUT=docs'
+      - 'PANDOC_OUTPUT=outputs'
     args:
       - '-c'
       - |
-        mkdir -p "${_ADOC_DIR}"
-        mkdir -p "${_IMAGE_DIR}"
-
-        echo "" > "${_NAV_FILE}"
-
-        find $BASE_DIR -name "__drizzle_migrations.md" -exec mv {} "${_BASE_DIR}/drizzle_migrations.md" \;
-        find $BASE_DIR -name "__drizzle_migrations.svg" -exec mv {} "${_BASE_DIR}/drizzle_migrations.svg" \;
-
-        find $BASE_DIR -type f -exec sed -i '' 's/__drizzle_migrations/drizzle_migrations/g' {} +
-
-        find $BASE_DIR -name "*.md" | while read md_file; do
-          adoc_file="${_ADOC_DIR}/$(basename "${md_file%.md}.adoc")"
-
-          if grep -q '.md' "${md_file}"; then
-            sed -i '' 's/\.md/\.html/g' "${md_file}"
-            echo "md文字列あり"
-          fi
-
-          docker run --rm -v "$(pwd)":/source pandoc/core -f markdown -t asciidoc -o "/source/${adoc_file}" "/source/${md_file}"
-
-          if [ "$(basename "${adoc_file}")" = "README.adoc" ]; then
-            sed -i '' '1s/^/= tbls Overview\n\n/' "${adoc_file}"
-            echo "README.adocに'tbls Overview'を追加しました"
-            # nav.adocにREADME.adocを先頭に追加
-            sed -i '' '1s/^/* xref:README.adoc[]/' "${NAV_FILE}"
-          else
-            echo "** xref:$(basename "${adoc_file}")[]" >> "${NAV_FILE}"
-          fi
-
-          grep -o '!\[.*\](.*\.svg)' "${md_file}" | sed -E 's/!\[.*\]\((.*\.svg)\)/\1/' | while read svg_path; do
-            svg_path_relative=$(basename "${svg_path}")
-            
-            echo "コピー元: ${BASE_DIR}/${svg_path_relative}"
-            echo "コピー先: ${IMAGE_DIR}/${svg_path_relative}"
-            
-            cp "${BASE_DIR}/${svg_path_relative}" "${IMAGE_DIR}/${svg_path_relative}"
-          done
-        done
+        chmod +x ./convert-tbls-doc.sh
+        ./convert-tbls-doc.sh
 
 # chmod +x convert_md_to_adoc.sh
 # ./convert-tbls-doc.sh
@@ -89,10 +95,6 @@ steps:
 substitutions:
   _APP_NAME: antora-db-doc
   _TAG_NAME: latest
-  _BASE_DIR: "tbls/dbdoc"
-  _ADOC_DIR: "docs/modules/tbls/pages"
-  _IMAGE_DIR: "docs/modules/tbls/images"
-  _NAV_FILE: "docs/modules/tbls/nav.adoc"
 timeout: 900s
 options:
   logging: CLOUD_LOGGING_ONLY
