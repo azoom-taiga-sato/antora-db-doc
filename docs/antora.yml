@@ -4,5 +4,4 @@ version: 1.4.7
 prerelease: -beta.1
 nav:
 - modules/ROOT/nav.adoc
-- modules/module-one/nav.adoc
-- modules/dbdoc/nav.adoc
+- modules/tbls/nav.adoc

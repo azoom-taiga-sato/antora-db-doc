@@ -8,7 +8,7 @@ User情報に関するドキュメント
 
 | Name | Columns | Comment | Type | Labels |
 | ---- | ------- | ------- | ---- | ------ |
-| [user](user.md) | 11 | Users table | BASE TABLE | `user` `privacy data` |
+| [user](user.html) | 11 | Users table | BASE TABLE | `user` `privacy data` |
 
 ## Relations
 

@@ -4,15 +4,15 @@
 
 | Name | Description |
 | ---- | ----------- |
-| [User情報](viewpoint-0.md) | User情報に関するドキュメント |
+| [User情報](viewpoint-0.html) | User情報に関するドキュメント |
 
 ## Tables
 
 | Name | Columns | Comment | Type | Labels |
 | ---- | ------- | ------- | ---- | ------ |
-| [__drizzle_migrations](__drizzle_migrations.md) | 3 |  | BASE TABLE |  |
-| [attribute](attribute.md) | 4 |  | BASE TABLE |  |
-| [user](user.md) | 11 | Users table | BASE TABLE | `user` `privacy data` |
+| [drizzle_migrations](drizzle_migrations.html) | 3 |  | BASE TABLE |  |
+| [attribute](attribute.html) | 4 |  | BASE TABLE |  |
+| [user](user.html) | 11 | Users table | BASE TABLE | `user` `privacy data` |
 
 ## Relations
 
