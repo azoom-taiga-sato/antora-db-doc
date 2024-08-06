@@ -1,4 +1,4 @@
 .actrc
 node_modules
-outputs
-!outputs/antora-db-doc/v.5.1.8
+outputs/antora-db-doc/*
+!outputs/antora-db-doc/v.5.1.8/
