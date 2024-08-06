@@ -82,7 +82,7 @@ jobs:
       - name: Run SchemaSpy
         run: java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
 
-  version-update:
+  version-update-:
     runs-on: ubuntu-latest
     needs: doc-creation
     steps:
@@ -113,6 +113,9 @@ jobs:
         run: |
           npm version ${{ github.event.inputs.new_version }} --no-git-tag-version
 
+      - name: Show git status
+        run: git status
+        
       - name: Commit changes
         run: |
           git config --global user.name 'github-actions'
