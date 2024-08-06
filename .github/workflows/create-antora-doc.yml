@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       new_version:
-        description: 'New version to set (start with v.)'
+        description: 'New version to set (should follow Semantic Versioning)'
         required: true
 
 jobs:
@@ -43,7 +43,7 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add docs/antora.yml package.json
-          git commit -m "Update version to ${{ github.event.inputs.new_version }}"
-          git tag ${{ github.event.inputs.new_version }}
-          git push origin ${{ github.ref_name }} ${{ github.event.inputs.new_version }}
+          git commit -m "Update doc version to v.${{ github.event.inputs.new_version }}"
+          git tag docv.${{ github.event.inputs.new_version }}
+          git push origin ${{ github.ref_name }} docv.${{ github.event.inputs.new_version }}
           git push origin HEAD:${{ github.ref_name }}
