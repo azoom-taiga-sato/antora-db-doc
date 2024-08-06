@@ -50,7 +50,7 @@ steps:
   - id: migrate-database
     name: 'gcr.io/cloud-builders/yarn:node-20.11.0'
     entrypoint: bash
-    waitFor: [prepare-secret, prepare-socket-folder, start-cloudsql-proxy]
+    waitFor: [prepare-secret, prepare-socket-folder]
     args:
       - '-c'
       - >
@@ -63,20 +63,20 @@ steps:
         path: /cloudsql
 
 # Generate documentation from the migrated database
-  - id: generate-db-doc
-    name: 'k1low/tbls:1.43.1'
-    entrypoint: sh
-    waitFor: [migrate-database]
-    env: 
-      - 'DSN=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/${_CLOUD_SQL_INSTANCES}'
-    args:
-      - '-c'
-      - |
-        export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo"
-        tbls doc --config ./.tbls.yml
-    volumes:
-      - name: cloudsql
-        path: /cloudsql
+  # - id: generate-db-doc
+  #   name: 'k1low/tbls:1.43.1'
+  #   entrypoint: sh
+  #   waitFor: [migrate-database]
+  #   env: 
+  #     - 'DSN=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/${_CLOUD_SQL_INSTANCES}'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo"
+  #       tbls doc --config ./.tbls.yml
+  #   volumes:
+  #     - name: cloudsql
+  #       path: /cloudsql
       # Commands to run locally
         #docker pull k1low/tbls:1.43.1
         #docker run --platform linux/amd64 k1low/tbls:1.43.1
@@ -123,7 +123,10 @@ steps:
     entrypoint: 'sh'
     args:
       - '-c'
-      - 'echo "Contents of docs/modules/tbls/:" && ls -R docs/modules/tbls/'
+      - |
+        echo "Contents of docs/modules/tbls/:" && ls -R docs/modules/tbls/;
+        echo "Contents of docs/modules/ROOT/pages/index.adoc:" && cat docs/modules/ROOT/pages/index.adoc;
+        echo "Contents of docs/modules/tbls/nav.adoc:" && cat docs/modules/tbls/nav.adoc
 
   # Fetch the Antora documentation
   - id: antora-doc-creation
@@ -154,6 +157,7 @@ steps:
         # docker build -t test -f ./cicd/dev/Dockerfile .
         # docker run -p 8080:8080 test
 
+  # Deploy the app to Cloud Run
   - id: "deploy"
     name: gcr.io/cloud-builders/gcloud
     entrypoint: bash
