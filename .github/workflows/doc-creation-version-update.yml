@@ -103,7 +103,7 @@ jobs:
 
       - name: Update version in antora.yml
         run: |
-          sed -i 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora-adoc/antora.yml
+          sed 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora-adoc/antora.yml
 
       - name: Update package.json version
         run: |
