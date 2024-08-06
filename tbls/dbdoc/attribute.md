@@ -3,7 +3,7 @@
 ## Description
 
 <details>
-<summary><strong>Table Definition</strong></summary>
+<summary><strong>Table Definitionaaaaaaa</strong></summary>
 
 ```sql
 CREATE TABLE `attribute` (
