@@ -105,13 +105,13 @@ steps:
       - 'chmod +x convert-tbls-doc.sh'
   
   # Run the script to convert the tbls documentation
-  - id: convert-tbls-doc
-    name: 'gcr.io/cloud-builders/gcloud'
-    waitFor: [set-execute-permission]
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - './convert-tbls-doc.sh'
+  # - id: convert-tbls-doc
+  #   name: 'gcr.io/cloud-builders/gcloud'
+  #   waitFor: [set-execute-permission]
+  #   entrypoint: 'sh'
+  #   args:
+  #     - '-c'
+  #     - './convert-tbls-doc.sh'
     # Commands to run locally
       # chmod +x convert-tbls-doc.sh
       # ./convert-tbls-doc.sh
