@@ -128,15 +128,6 @@ steps:
         echo "Contents of docs/modules/ROOT/pages/index.adoc:" && cat docs/modules/ROOT/pages/index.adoc;
         echo "Contents of docs/modules/tbls/nav.adoc:" && cat docs/modules/tbls/nav.adoc
 
-  # Fetch the Antora documentation
-  - id: antora-doc-creation
-    name: 'antora/antora'
-    args: 
-      - --fetch
-      - antora-playbook.yml
-      # Commands to run locally
-        # docker run --rm --platform linux/amd64 -v $PWD:/work -w /work antora/antora antora --fetch antora-playbook.yml
-
   - id: create-schemaspy-index-file
     name: 'gcr.io/cloud-builders/gcloud'
     waitFor: [antora-doc-creation]
@@ -144,21 +135,24 @@ steps:
     args:
       - '-c'
       - |
-        # ベースディレクトリ
-        BASE_DIR="outputs/antora-db-doc"
-
-        # 各バージョンフォルダを取得
-        for version_dir in "$BASE_DIR"/*; do
+        echo "Starting create-schemaspy-index-file step"
+        echo "Base directory: ${_BASE_DIR}"
+        
+        for version_dir in "${_BASE_DIR}"/*; do
           if [ -d "$version_dir" ]; then
             version=$(basename "$version_dir")
+            echo "Processing version directory: $version"
             
-            # schemaspyディレクトリを作成
             mkdir -p "$version_dir/schemaspy"
+            echo "Created directory: $version_dir/schemaspy"
             
-            # index.htmlファイルを作成し、内容を記載
             echo "This is the version $version of index" > "$version_dir/schemaspy/index.html"
+            echo "Created index.html for version: $version"
+          else
+            echo "Skipping non-directory: $version_dir"
           fi
         done
+        echo "Finished create-schemaspy-index-file step"
 
   # Build the app image via DockerFile (Container Registry is used)
   - id: build-app-image
@@ -202,3 +196,4 @@ substitutions:
   _TAG_NAME: latest
   _CLOUD_SQL_INSTANCES: azoom-taiga-satou:asia-northeast1:tbls-demo
   _CLOUD_SQL_PROXY_IMAGE_NAME: 'gcr.io/cloudsql-docker/gce-proxy:1.35.4'
+  _BASE_DIR: 'outputs/antora-db-doc'
