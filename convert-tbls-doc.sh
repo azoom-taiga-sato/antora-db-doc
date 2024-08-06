@@ -19,7 +19,8 @@ find $BASE_DIR -name "__drizzle_migrations.md" -exec mv {} "${BASE_DIR}/drizzle_
 find $BASE_DIR -name "__drizzle_migrations.svg" -exec mv {} "${BASE_DIR}/drizzle_migrations.svg" \;
 
 # 参照を更新
-find $BASE_DIR -type f -exec sed -i '' 's/__drizzle_migrations/drizzle_migrations/g' {} +
+# find $BASE_DIR -type f -exec sed -i '' 's/__drizzle_migrations/drizzle_migrations/g' {} +
+find $BASE_DIR -type f -exec sed -i 's/__drizzle_migrations/drizzle_migrations/g' {} +
 
 # mdファイルの取得
 find $BASE_DIR -name "*.md" | while read md_file; do
@@ -29,7 +30,8 @@ find $BASE_DIR -name "*.md" | while read md_file; do
     # mdファイル内にmd文字列が含まれているか確認
     if grep -q '.md' "${md_file}"; then
         # md文字列をhtmlに置換 (Macの場合は -i '' を使用)
-        sed -i '' 's/\.md/\.html/g' "${md_file}"
+        # sed -i '' 's/\.md/\.html/g' "${md_file}"
+        sed -i 's/\.md/\.html/g' "${md_file}"
         echo "md文字列あり"
     fi
 
@@ -38,13 +40,16 @@ find $BASE_DIR -name "*.md" | while read md_file; do
 
     # adoc_fileがREADME.adocの場合、ページの先頭に"= tbls Overview"を追加
     if [ "$(basename "${adoc_file}")" = "README.adoc" ]; then
-        sed -i '' '1s/^/= tbls Overview\n\n/' "${adoc_file}"
+        # sed -i '' '1s/^/= tbls Overview\n\n/' "${adoc_file}"
+        sed -i '1s/^/= tbls Overview\n\n/' "${adoc_file}"
         echo "README.adocに'tbls Overview'を追加しました"
         # nav.adocにREADME.adocを先頭に追加
-        sed -i '' '1s/^/* xref:README.adoc[]/' "${NAV_FILE}"
+        # sed -i '' '1s/^/* xref:README.adoc[]/' "${NAV_FILE}"
+        sed -i '1s/^/* xref:README.adoc[]/' "${NAV_FILE}"
     else
         # nav.adocにその他のファイルを追加
         echo "** xref:$(basename "${adoc_file}")[]" >> "${NAV_FILE}"
+        cat "${NAV_FILE}"
     fi
 
     # SVGファイルの参照を変更せずにコピー
