@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # ベースディレクトリ
-BASE_DIR="tbls/dbdoc"
-ADOC_DIR="docs/modules/tbls/pages"
-IMAGE_DIR="docs/modules/tbls/images"
-NAV_FILE="docs/modules/tbls/nav.adoc"
+BASE_DIR="docs/tbls-raw"
+ADOC_DIR="docs/antora-adoc/modules/tbls/pages"
+IMAGE_DIR="docs/antora-adoc/modules/tbls/images"
+NAV_FILE="docs/antora-adoc/modules/tbls/nav.adoc"
 
 # AsciiDocディレクトリが存在しない場合は作成
 mkdir -p "${ADOC_DIR}"
