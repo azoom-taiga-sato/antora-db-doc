@@ -3,9 +3,9 @@ site:
   start_page: antora-db-doc::index.adoc
 content:
   sources:
-  - url: ./
-    tags: docv.*
-    branches: ~
+  - url: https://github.com/azoom-taiga-sato/antora-db-doc.git
+    # tags: docv.*
+    # branches: ~
     start_path: docs/antora-adoc
     edit_url: false
 asciidoc:
