@@ -50,7 +50,7 @@ steps:
   - id: migrate-database
     name: 'gcr.io/cloud-builders/yarn:node-20.11.0'
     entrypoint: bash
-    waitFor: [prepare-secret, prepare-socket-folder]
+    waitFor: [prepare-secret, prepare-socket-folder, start-cloudsql-proxy]
     args:
       - '-c'
       - >
@@ -67,10 +67,12 @@ steps:
     name: 'k1low/tbls:1.43.1'
     entrypoint: sh
     waitFor: [migrate-database]
+    env: 
+      - 'DSN=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/${_CLOUD_SQL_INSTANCES}'
     args:
       - '-c'
       - |
-        export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/$_CLOUD_SQL_INSTANCES"
+        export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo"
         tbls doc --config ./.tbls.yml
     volumes:
       - name: cloudsql
