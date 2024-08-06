@@ -65,13 +65,13 @@ steps:
 # Generate documentation from the migrated database
   - id: generate-db-doc
     name: 'k1low/tbls:1.43.1'
-    entrypoint: bash
+    entrypoint: sh
     waitFor: [migrate-database]
     args:
       - '-c'
-      - >
+      - |
         export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/$_CLOUD_SQL_INSTANCES"
-        tbls doc --config /.tbls.yml
+        tbls doc --config ./.tbls.yml
     volumes:
       - name: cloudsql
         path: /cloudsql
