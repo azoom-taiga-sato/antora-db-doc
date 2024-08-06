@@ -56,12 +56,29 @@ steps:
       - >
         source .env
         mv package.json package.json.bak && echo '{"dependencies":
-        {"drizzle-orm": "0.31.2","drizzle-kit": "0.22.8","mysql2": "3.9.6"}}' >
+        {"drizzle-orm": "0.31.2","drizzle-kit": "0.22.8","mysql2": "3.9.6", "express": "^4.17.1"}}' >
         package.json && yarn && yarn drizzle-kit migrate
     volumes:
       - name: cloudsql
         path: /cloudsql
-  
+
+# Generate documentation from the migrated database
+  - id: generate-db-doc
+    name: 'k1low/tbls:1.43.1'
+    entrypoint: bash
+    waitFor: [migrate-database]
+    args:
+      - '-c'
+      - >
+        export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/$_CLOUD_SQL_INSTANCES"
+        tbls doc --config /.tbls.yml
+    volumes:
+      - name: cloudsql
+        path: /cloudsql
+      # Commands to run locally
+        #docker pull k1low/tbls:1.43.1
+        #docker run --platform linux/amd64 k1low/tbls:1.43.1
+
   # Stop the Cloud SQL proxy
   - id: kill-cloudsql-proxy
     name: gcr.io/cloud-builders/docker
