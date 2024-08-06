@@ -112,9 +112,9 @@ steps:
     args:
       - '-c'
       - './convert-tbls-doc.sh'
-    Commands to run locally
-      chmod +x convert-tbls-doc.sh
-      ./convert-tbls-doc.sh
+    # Commands to run locally
+    #   chmod +x convert-tbls-doc.sh
+    #   ./convert-tbls-doc.sh
 
   # Echo the contents of docs/modules/tbls/ (should be removed later)
   - id: echo-tbls-doc
