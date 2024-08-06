@@ -67,6 +67,9 @@ jobs:
           java-version: '8'
           distribution: 'temurin'
 
+      - name: Install Graphviz
+        run: sudo apt-get install -y graphviz
+
       - name: Run SchemaSpy
         run: java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
 
