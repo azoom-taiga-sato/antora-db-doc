@@ -84,6 +84,7 @@ jobs:
 
   version-update:
     runs-on: ubuntu-latest
+    needs: doc-creation
     steps:
       - name: Validate version format
         id: validate_version
