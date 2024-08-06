@@ -61,8 +61,12 @@ jobs:
           DATABASE: tbls_demo_box
         run: tbls doc --force
 
-      - name: Install Java 8
-        run: sudo apt-get install -y openjdk-8-jdk
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: maven
 
       - name: Run SchemaSpy
         run: java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
