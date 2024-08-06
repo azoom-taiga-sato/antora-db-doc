@@ -15,6 +15,7 @@ steps:
     args:
       - '-c'
       - |
+        apt-get update && apt-get install -y rsync
         for version_dir in "${_BASE_DIR}"/*; do
           if [ -d "$version_dir" ]; then
             mkdir -p "$version_dir/schemaspy"
