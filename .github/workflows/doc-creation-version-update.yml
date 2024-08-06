@@ -61,6 +61,15 @@ jobs:
           DATABASE: tbls_demo_box
         run: tbls doc --force
 
+      - name: Pull pandoc/core Docker image
+        run: docker pull pandoc/core
+  
+      - name: Set execute permission for the script
+        run: chmod +x convert-tbls-doc.sh
+  
+      - name: Run the script to convert the tbls documentation
+        run: ./convert-tbls-doc.sh
+
       - name: Set up JDK 8
         uses: actions/setup-java@v3
         with:
@@ -94,7 +103,7 @@ jobs:
 
       - name: Update version in antora.yml
         run: |
-          sed -i 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora.yml
+          sed -i 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora-adoc/antora.yml
 
       - name: Update package.json version
         run: |
