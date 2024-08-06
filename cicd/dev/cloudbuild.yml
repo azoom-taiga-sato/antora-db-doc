@@ -147,12 +147,12 @@ steps:
           --allow-unauthenticated \
           --image gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}
 
+timeout: 900s
+options:
+  logging: CLOUD_LOGGING_ONLY
 substitutions:
   _APP_NAME: antora-db-doc
   _APP_DOCKER_FILE: cicd/dev/Dockerfile
   _TAG_NAME: latest
   _CLOUD_SQL_INSTANCES: azoom-taiga-satou:asia-northeast1:tbls-demo
   _CLOUD_SQL_PROXY_IMAGE_NAME: 'gcr.io/cloudsql-docker/gce-proxy:1.35.4'
-timeout: 900s
-options:
-  logging: CLOUD_LOGGING_ONLY
