@@ -106,7 +106,7 @@ steps:
   
   # Run the script to convert the tbls documentation
   - id: convert-tbls-doc
-    name: 'gcr.io/cloud-builders/gcloud'
+    name: 'gcr.io/cloud-builders/docker'
     waitFor: [set-execute-permission]
     entrypoint: 'sh'
     args:
