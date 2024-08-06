@@ -1,4 +1,4 @@
-= Welcom
+= Welcome
 
 This is the database documentation for tbls and schemaspy.
 As for tbls documentation, you can find them from the nav bar.
