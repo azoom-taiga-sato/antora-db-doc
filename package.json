@@ -1,6 +1,6 @@
 {
   "name": "antora-db-doc",
-  "version": "1.1.9",
+  "version": "1.2.0",
   "description": "java -jar ./schemaspy-6.2.4.jar \\ -configFile ./schemaspy.properties",
   "main": "index.js",
   "directories": {
