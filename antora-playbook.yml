@@ -9,7 +9,7 @@ content:
     # tags: [1.4.9]
     # branches: ~
     # branches: [main]
-    # tags: v.*
+    tags: v.*
     start_path: docs
     edit_url: false
 asciidoc:

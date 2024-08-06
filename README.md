@@ -82,20 +82,15 @@
 
 
 
-
-
-
-
-
-
-
-
-https://copier.readthedocs.io/en/v5.0.0/
-
-
-https://qiita.com/sky_y/items/80bcd0f353ef5b8980ee
-
-
-
-
-pandoc tbls/dbdoc/attribute.md -f markdown -t asciidoc -o docs/modules/dbdoc/pages/attribute.adoc
+* remoteタグの一括削除: 下記をTerminalで叩く
+```bash
+git ls-remote --tags origin | awk '{print $2}' | sed 's#refs/tags/##' > delete-tags.sh
+echo -e '#!/bin/bash\n' > delete-tags.sh
+git ls-remote --tags origin | awk '{print $2}' | sed 's#refs/tags/##' | while read TAG; do
+  echo "git push origin :refs/tags/$TAG" >> delete-tags.sh
+done
+```
+```bash
+chmod +x delete-tags.sh
+./delete-tags.sh
+```
