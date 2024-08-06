@@ -1,0 +1,99 @@
+name: Create Antora Docs & Update Version
+
+on:
+  # workflow_dispatch:
+  #   inputs:
+  #     new_version:
+  #       description: 'New version to set (should follow Semantic Versioning)'
+  #       required: true
+  push:
+    branches:
+      - main  # 実行したいブランチを指定
+
+jobs:
+  doc-creation:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: tbls_demo_box
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      # Database migration (remove "--> statement-breakpoint" if it is included in the migration file)
+      - name: Apply Migrations
+        run: |
+          for file in drizzle/migrations/*.sql; do
+            if grep -q 'statement-breakpoint' "$file"; then
+              tmp_file=$(mktemp)
+              sed 's/--> statement-breakpoint//g' "$file" > "$tmp_file"
+              mysql -h 127.0.0.1 -u root tbls_demo_box < "$tmp_file" && echo "Applied $file" || exit 1
+              rm "$tmp_file"
+            else
+              mysql -h 127.0.0.1 -u root tbls_demo_box < "$file" && echo "Applied $file" || exit 1
+            fi
+          done
+
+      # Check databases and tables    
+      - name: Check Databases and Tables
+        run: |
+          echo "Showing databases..."
+          mysql -h 127.0.0.1 -u root -e "SHOW DATABASES;"
+          echo "Using tbls_demo_box database..."
+          mysql -h 127.0.0.1 -u root -e "USE tbls_demo_box; SHOW TABLES;"
+
+      # Setup tbls
+      - name: Setup tbls
+        uses: k1low/setup-tbls@v1
+
+      # Run tbls doc
+      - name: Run tbls doc
+        env:
+          DATABASE: tbls_demo_box
+        run: tbls doc --force
+
+  # version-update:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Validate version format
+  #       id: validate_version
+  #       run: |
+  #         if ! [[ "${{ github.event.inputs.new_version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  #           echo "Invalid version format. Must follow Semantic Versioning (e.g., 1.0.0)."
+  #           exit 1
+  #         fi
+
+  #     - name: Check if version already exists
+  #       id: check_version
+  #       run: |
+  #         if git rev-parse "refs/tags/${{ github.event.inputs.new_version }}" >/dev/null 2>&1; then
+  #           echo "Version ${{ github.event.inputs.new_version }} already exists."
+  #           exit 1
+  #         fi
+
+  #     - name: Update version in antora.yml
+  #       run: |
+  #         sed -i 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora.yml
+
+  #     - name: Update package.json version
+  #       run: |
+  #         npm version ${{ github.event.inputs.new_version }} --no-git-tag-version
+
+  #     - name: Commit changes
+  #       run: |
+  #         git config --global user.name 'github-actions'
+  #         git config --global user.email 'github-actions@github.com'
+  #         git add docs/antora.yml package.json
+  #         git commit -m "Update doc version to v.${{ github.event.inputs.new_version }}"
+  #         git tag docv.${{ github.event.inputs.new_version }}
+  #         git push origin ${{ github.ref_name }} docv.${{ github.event.inputs.new_version }}
+  #         git push origin HEAD:${{ github.ref_name }}

@@ -1,14 +1,9 @@
 site:
   title: Antora Demo Site
-  # the 404 page and sitemap files only get generated when the url property is set
-  #url: https://antora.gitlab.io/demo/docs-site
   start_page: antora-db-doc::index.adoc
 content:
   sources:
   - url: ./
-    # tags: [1.4.9]
-    # branches: ~
-    # branches: [main]
     tags: v.*
     start_path: docs
     edit_url: false

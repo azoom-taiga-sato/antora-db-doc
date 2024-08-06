@@ -1,4 +1,4 @@
-name: Create Antora Docs with Tag
+name: Create Antora Docs & Update Version
 
 on:
   workflow_dispatch:
