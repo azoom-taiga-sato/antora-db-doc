@@ -8,22 +8,19 @@ steps:
       # Commands to run locally
         # docker run --rm --platform linux/amd64 -v $PWD:/work -w /work antora/antora antora --fetch antora-playbook.yml
 
-  # - id: create-schemaspy-index-file
-  #   name: 'gcr.io/cloud-builders/gcloud'
-  #   waitFor: [antora-doc-creation]
-  #   entrypoint: 'sh'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       for version_dir in "${_BASE_DIR}"/*; do
-  #         if [ -d "$version_dir" ]; then
-  #           version=$(basename "$version_dir")
-            
-  #           mkdir -p "$version_dir/schemaspy"
-            
-  #           echo "This is the version $version of index" > "$version_dir/schemaspy/index.html"
-  #         fi
-  #       done
+  - id: create-schemaspy-index-file
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: [antora-doc-creation]
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        for version_dir in "${_BASE_DIR}"/*; do
+          if [ -d "$version_dir" ]; then
+            mkdir -p "$version_dir/schemaspy"
+            rsync -av docs/schemaspy-raw/ "$version_dir/schemaspy/"
+          fi
+        done
 
   # Build the app image via DockerFile (Container Registry is used)
   - id: build-app-image
