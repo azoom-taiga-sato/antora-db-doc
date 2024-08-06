@@ -1,4 +1,5 @@
 steps:
+  # Retrieve environment variables from secrets and save to .env file
   - id: prepare-secret
     name: gcr.io/cloud-builders/gcloud
     waitFor: ['-']
@@ -7,6 +8,8 @@ steps:
       - '-c'
       - |
         gcloud secrets versions access latest --project=${PROJECT_ID} --secret=${_APP_NAME}-env --format='get(payload.data)' | tr '_-' '/+' | base64 -d > .env
+  
+  # Display the contents of the .env file (should be removed later)
   - id: echo-secrets
     name: gcr.io/cloud-builders/gcloud
     waitFor: ['prepare-secret']
@@ -16,6 +19,8 @@ steps:
       - |
         echo "Contents of .env:"
         cat .env
+  
+  # Create Cloud SQL socket folder and set appropriate permissions
   - id: prepare-socket-folder
     name: gcr.io/cloud-builders/gcloud
     waitFor: ['-']
@@ -28,6 +33,8 @@ steps:
     volumes:
       - name: cloudsql
         path: /cloudsql
+  
+  # Start the Cloud SQL proxy
   - id: start-cloudsql-proxy
     name: '${_CLOUD_SQL_PROXY_IMAGE_NAME}'
     waitFor: [prepare-socket-folder]
@@ -38,24 +45,24 @@ steps:
     volumes:
       - name: cloudsql
         path: /cloudsql
+  
+  # Migrate the database
   - id: migrate-database
     name: 'gcr.io/cloud-builders/yarn:node-20.11.0'
     entrypoint: bash
     waitFor: [prepare-secret, prepare-socket-folder]
     args:
       - '-c'
-      - |
+      - >
         source .env
-        mv package.json package.json.bak && echo '{"dependencies":{"drizzle-orm":"0.31.2","drizzle-kit":"0.22.8","mysql2":"3.9.6"}}' > package.json && yarn && yarn drizzle-kit migrate
+        mv package.json package.json.bak && echo '{"dependencies":
+        {"drizzle-orm": "0.31.2","drizzle-kit": "0.22.8","mysql2": "3.9.6"}}' >
+        package.json && yarn && yarn drizzle-kit migrate
     volumes:
       - name: cloudsql
         path: /cloudsql
-  # - id: tbls-doc-creation
-  #   name: 'ghcr.io/k1low/tbls'
-  #   args:
-  #       - '-c' 
-  #       - | 
-  #       tbls doc 'mysql://root:@localhost:3306/tbls_demo_box'
+  
+  # Stop the Cloud SQL proxy
   - id: kill-cloudsql-proxy
     name: gcr.io/cloud-builders/docker
     waitFor: [migrate-database]
@@ -63,40 +70,70 @@ steps:
     args:
       - -c
       - 'docker ps -q --filter ancestor="${_CLOUD_SQL_PROXY_IMAGE_NAME}" | xargs docker stop'
-  - id: build-docker-image
+  
+  # Pull the pandoc/core Docker image
+  - id: pull-pandoc
     name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', 'gcr.io/$PROJECT_ID/pandoc-converter', '-f', './cicd/dev/Dockerfile', '.']
+    waitFor: [kill-cloudsql-proxy]
+    args: ['pull', 'pandoc/core']
 
-  - id: convert-md-asciidoc
-    name: 'gcr.io/$PROJECT_ID/pandoc-converter'
-    entrypoint: 'bash'
-    env: 
-      - 'PANDOC_INPUT=docs'
-      - 'PANDOC_OUTPUT=outputs'
+  # Set execute permission for the script
+  - id: set-execute-permission
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'sh'
     args:
       - '-c'
-      - |
-        chmod +x ./convert-tbls-doc.sh
-        ./convert-tbls-doc.sh
+      - 'chmod +x convert-tbls-doc.sh'
+  
+  # Run the script to convert the tbls documentation
+  - id: convert-tbls-doc
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: [set-execute-permission]
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - './convert-tbls-doc.sh'
+    # Commands to run locally
+      # chmod +x convert-tbls-doc.sh
+      # ./convert-tbls-doc.sh
 
-# chmod +x convert_md_to_adoc.sh
-# ./convert-tbls-doc.sh
+  # Echo the contents of docs/modules/tbls/ (should be removed later)
+  - id: echo-tbls-doc
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: [convert-tbls-doc]
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - 'echo "Contents of docs/modules/tbls/:" && ls -R docs/modules/tbls/'
 
+  # Fetch the Antora documentation
   - id: antora-doc-creation
     name: 'antora/antora'
     args: 
       - --fetch
       - antora-playbook.yml
-# docker run --rm --platform linux/amd64 -v $PWD:/work -w /work antora/antora antora --fetch antora-playbook.yml
+      # Commands to run locally
+        # docker run --rm --platform linux/amd64 -v $PWD:/work -w /work antora/antora antora --fetch antora-playbook.yml
 
-  - id: build
+  # Build the app image via DockerFile (Container Registry is used)
+  - id: build-app-image
     name: 'gcr.io/kaniko-project/executor:latest'
+    waitFor: ['antora-doc-creation']
     args:
       - --dockerfile=./cicd/dev/Dockerfile
       - --destination=gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}
 
-# docker build -t test -f ./cicd/dev/Dockerfile .
-# docker run -p 3000:3000 test
+  # Build the app image via DockerFile (Artifact Registry is used)
+  # - id: build-app-image
+  #   name: 'gcr.io/kaniko-project/executor:latest'
+  #   waitFor: ['antora-doc-creation']
+  #   args:
+  #     - --dockerfile=${_APP_DOCKER_FILE}
+  #     - --destination=asia-northeast1-docker.pkg.dev/azoom-taiga-satou/antora-demo:latest
+  #     - --cache=true
+      # Commands to run locally
+        # docker build -t test -f ./cicd/dev/Dockerfile .
+        # docker run -p 8080:8080 test
 
   - id: "deploy"
     name: gcr.io/cloud-builders/gcloud
@@ -108,10 +145,11 @@ steps:
           --platform managed \
           --region asia-northeast1 \
           --allow-unauthenticated \
-          --image gcr.io/${PROJECT_ID}/${_APP_NAME} \
+          --image gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}
 
 substitutions:
   _APP_NAME: antora-db-doc
+  _APP_DOCKER_FILE: cicd/dev/Dockerfile
   _TAG_NAME: latest
   _CLOUD_SQL_INSTANCES: azoom-taiga-satou:asia-northeast1:tbls-demo
   _CLOUD_SQL_PROXY_IMAGE_NAME: 'gcr.io/cloudsql-docker/gce-proxy:1.35.4'
