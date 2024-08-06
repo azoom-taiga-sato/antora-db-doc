@@ -65,4 +65,4 @@ substitutions:
   _TAG_NAME: latest
   _CLOUD_SQL_INSTANCES: azoom-taiga-satou:asia-northeast1:tbls-demo
   _CLOUD_SQL_PROXY_IMAGE_NAME: 'gcr.io/cloudsql-docker/gce-proxy:1.35.4'
-  _BASE_DIR: /workspace/outputs/antora-db-doc
+  _BASE_DIR: outputs/antora-db-doc
