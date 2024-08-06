@@ -5,7 +5,7 @@ content:
   sources:
   - url: ./
     tags: v.*
-    start_path: docs
+    start_path: docs/antora-adoc
     edit_url: false
 asciidoc:
   attributes:

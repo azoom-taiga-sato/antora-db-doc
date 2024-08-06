@@ -61,6 +61,12 @@ jobs:
           DATABASE: tbls_demo_box
         run: tbls doc --force
 
+      - name: Install Java 8
+        run: sudo apt-get install -y openjdk-8-jdk
+
+      - name: Run SchemaSpy
+        run: java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
+
   # version-update:
   #   runs-on: ubuntu-latest
   #   steps:
