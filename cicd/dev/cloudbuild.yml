@@ -117,16 +117,16 @@ steps:
       # ./convert-tbls-doc.sh
 
   # Echo the contents of docs/modules/tbls/ (should be removed later)
-  - id: echo-tbls-doc
-    name: 'gcr.io/cloud-builders/gcloud'
-    waitFor: [convert-tbls-doc]
-    entrypoint: 'sh'
-    args:
-      - '-c'
-      - |
-        echo "Contents of docs/modules/tbls/:" && ls -R docs/modules/tbls/;
-        echo "Contents of docs/modules/ROOT/pages/index.adoc:" && cat docs/modules/ROOT/pages/index.adoc;
-        echo "Contents of docs/modules/tbls/nav.adoc:" && cat docs/modules/tbls/nav.adoc
+  # - id: echo-tbls-doc
+  #   name: 'gcr.io/cloud-builders/gcloud'
+  #   waitFor: [convert-tbls-doc]
+  #   entrypoint: 'sh'
+  #   args:
+  #     - '-c'
+  #     - |
+  #       echo "Contents of docs/modules/tbls/:" && ls -R docs/modules/tbls/;
+  #       echo "Contents of docs/modules/ROOT/pages/index.adoc:" && cat docs/modules/ROOT/pages/index.adoc;
+  #       echo "Contents of docs/modules/tbls/nav.adoc:" && cat docs/modules/tbls/nav.adoc
 
   # Fetch the Antora documentation
   - id: antora-doc-creation

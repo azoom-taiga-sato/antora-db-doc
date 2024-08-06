@@ -1,6 +1,6 @@
 name: antora-db-doc
 title: Component 555555
-version: v.5.1.5
+version: v.5.1.6
 nav:
 - modules/ROOT/nav.adoc
 - modules/tbls/nav.adoc
