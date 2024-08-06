@@ -1,14 +1,14 @@
 name: Create Antora Docs & Update Version
 
 on:
-  # workflow_dispatch:
-  #   inputs:
-  #     new_version:
-  #       description: 'New version to set (should follow Semantic Versioning)'
-  #       required: true
-  push:
-    branches:
-      - main  # 実行したいブランチを指定
+  workflow_dispatch:
+    inputs:
+      new_version:
+        description: 'New version to set (should follow Semantic Versioning)'
+        required: true
+  # push:
+  #   branches:
+  #     - main
 
 jobs:
   doc-creation:
@@ -73,39 +73,39 @@ jobs:
       - name: Run SchemaSpy
         run: java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
 
-  # version-update:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Validate version format
-  #       id: validate_version
-  #       run: |
-  #         if ! [[ "${{ github.event.inputs.new_version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-  #           echo "Invalid version format. Must follow Semantic Versioning (e.g., 1.0.0)."
-  #           exit 1
-  #         fi
+  version-update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate version format
+        id: validate_version
+        run: |
+          if ! [[ "${{ github.event.inputs.new_version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format. Must follow Semantic Versioning (e.g., 1.0.0)."
+            exit 1
+          fi
 
-  #     - name: Check if version already exists
-  #       id: check_version
-  #       run: |
-  #         if git rev-parse "refs/tags/${{ github.event.inputs.new_version }}" >/dev/null 2>&1; then
-  #           echo "Version ${{ github.event.inputs.new_version }} already exists."
-  #           exit 1
-  #         fi
+      - name: Check if version already exists
+        id: check_version
+        run: |
+          if git rev-parse "refs/tags/${{ github.event.inputs.new_version }}" >/dev/null 2>&1; then
+            echo "Version ${{ github.event.inputs.new_version }} already exists."
+            exit 1
+          fi
 
-  #     - name: Update version in antora.yml
-  #       run: |
-  #         sed -i 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora.yml
+      - name: Update version in antora.yml
+        run: |
+          sed -i 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora.yml
 
-  #     - name: Update package.json version
-  #       run: |
-  #         npm version ${{ github.event.inputs.new_version }} --no-git-tag-version
+      - name: Update package.json version
+        run: |
+          npm version ${{ github.event.inputs.new_version }} --no-git-tag-version
 
-  #     - name: Commit changes
-  #       run: |
-  #         git config --global user.name 'github-actions'
-  #         git config --global user.email 'github-actions@github.com'
-  #         git add docs/antora.yml package.json
-  #         git commit -m "Update doc version to v.${{ github.event.inputs.new_version }}"
-  #         git tag docv.${{ github.event.inputs.new_version }}
-  #         git push origin ${{ github.ref_name }} docv.${{ github.event.inputs.new_version }}
-  #         git push origin HEAD:${{ github.ref_name }}
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add docs/antora.yml package.json
+          git commit -m "Update doc version to v.${{ github.event.inputs.new_version }}"
+          git tag docv.${{ github.event.inputs.new_version }}
+          git push origin ${{ github.ref_name }} docv.${{ github.event.inputs.new_version }}
+          git push origin HEAD:${{ github.ref_name }}
