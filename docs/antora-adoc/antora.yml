@@ -1,6 +1,6 @@
 name: antora-db-doc
 title: DB Docs (SchemaSpy/tbls)
-version: 1.1.9
+version: 1.2.0
 nav:
 - modules/ROOT/nav.adoc
 - modules/tbls/nav.adoc
