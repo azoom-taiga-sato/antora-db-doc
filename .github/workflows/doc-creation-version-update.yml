@@ -120,12 +120,8 @@ jobs:
         run: |
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
-          git add package.json
-          git add docs/antora-adoc/modules/tbls/pages/*
-          git add docs/antora-adoc/modules/tbls/images/*
-          git add docs/antora-adoc/modules/tbls/nav.adoc
-          git add docs/schemaspy-raw/*
-          git add docs/tbls-raw/*
+          git rm -r --cached .
+          git add .
           git commit -m "Update doc version to v.${{ github.event.inputs.new_version }}"
           git tag docv.${{ github.event.inputs.new_version }}
           git push origin ${{ github.ref_name }} docv.${{ github.event.inputs.new_version }}
