@@ -23,8 +23,8 @@ steps:
     args:
       - '-c'
       - |
-        echo "Contents of output directory:"
-        ls -la outputs
+        echo "Contents of outputs directory:"
+        find outputs -type d -print -o -type f -print
     id: echo-output-directory
     waitFor:
       - create-schemaspy-index-file

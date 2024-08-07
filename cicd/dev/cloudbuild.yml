@@ -31,7 +31,7 @@ steps:
       - '-c'
       - |
         echo "Contents of output directory:"
-        ls -la output
+        ls -la outputs
         
   # Build the app image via DockerFile (Container Registry is used)
   - id: build-app-image
