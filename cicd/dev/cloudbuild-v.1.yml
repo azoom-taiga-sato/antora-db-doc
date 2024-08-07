@@ -72,7 +72,7 @@ steps:
     args:
       - '-c'
       - |
-        export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo"
+        export DSN="mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo"
         tbls doc --config ./.tbls.yml
     volumes:
       - name: cloudsql
