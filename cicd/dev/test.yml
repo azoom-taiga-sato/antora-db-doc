@@ -1,0 +1,59 @@
+steps:
+  - name: antora/antora
+    args:
+      - '--fetch'
+      - antora-playbook.yml
+    id: antora-doc-creation
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - |
+        apt-get update && apt-get install -y rsync
+        for version_dir in outputs/antora-db-doc/*; do
+          if [ -d "$version_dir" ]; then
+            mkdir -p "$version_dir/schemaspy"
+            rsync -av docs/schemaspy-raw/ "$version_dir/schemaspy/"
+          fi
+        done
+    id: create-schemaspy-index-file
+    waitFor:
+      - antora-doc-creation
+    entrypoint: sh
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - |
+        echo "Contents of outputs directory:"
+        find outputs -type d -print -o -type f -print
+    id: echo-output-directory
+    waitFor:
+      - create-schemaspy-index-file
+    entrypoint: sh
+  - name: 'gcr.io/kaniko-project/executor:latest'
+    args:
+      - '--dockerfile=./cicd/dev/Dockerfile'
+      - '--destination=gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}'
+    id: build-app-image
+    waitFor:
+      - antora-doc-creation
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - |
+        gcloud beta run deploy ${_APP_NAME} \
+          --platform managed \
+          --region asia-northeast1 \
+          --allow-unauthenticated \
+          --image gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}
+    id: deploy
+    entrypoint: bash
+timeout: 900s
+options:
+  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _APP_DOCKER_FILE: cicd/dev/Dockerfile
+  _TAG_NAME: latest
+  _CLOUD_SQL_INSTANCES: 'azoom-taiga-satou:asia-northeast1:tbls-demo'
+  _CLOUD_SQL_PROXY_IMAGE_NAME: 'gcr.io/cloudsql-docker/gce-proxy:1.35.4'
+  _BASE_DIR: outputs/antora-db-doc
+  _APP_NAME: antora-db-doc

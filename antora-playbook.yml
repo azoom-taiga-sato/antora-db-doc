@@ -6,6 +6,7 @@ content:
   - url: https://github.com/azoom-taiga-sato/antora-db-doc.git
     # tags: docv.*
     # branches: ~
+    branches: [main, test]
     start_path: docs/antora-adoc
     edit_url: false
 asciidoc:
