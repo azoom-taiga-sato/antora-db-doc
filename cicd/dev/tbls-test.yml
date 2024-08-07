@@ -1,0 +1,69 @@
+steps:
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - >
+        gcloud secrets versions access latest --project=${PROJECT_ID}
+        --secret=${_APP_NAME}-env --format='get(payload.data)' | tr '_-' '/+' |
+        base64 -d > .env
+    id: prepare-secret
+    waitFor:
+      - '-'
+    entrypoint: bash
+  - name: gcr.io/cloud-builders/gcloud
+    args:
+      - '-c'
+      - |
+        [ -d /cloudsql ] || mkdir /cloudsql
+        chmod -R 777 /cloudsql
+    id: prepare-socket-folder
+    waitFor:
+      - '-'
+    entrypoint: bash
+    volumes:
+      - name: cloudsql
+        path: /cloudsql
+  - name: '${_CLOUD_SQL_PROXY_IMAGE_NAME}'
+    args:
+      - /cloud_sql_proxy
+      - '-dir=/cloudsql'
+      - '-instances=${_CLOUD_SQL_INSTANCES}'
+    id: start-cloudsql-proxy
+    volumes:
+      - name: cloudsql
+        path: /cloudsql
+  - name: 'k1low/tbls:1.43.1'
+    args:
+      - '-c'
+      - >
+        export
+        DSN="mysql://taiga.satou:Z5DG81feVqN6@unix(/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo)/tbls_demo_box"
+
+        tbls doc --config ./.tbls.yml
+    id: generate-db-doc
+    waitFor:
+      - prepare-socket-folder
+    entrypoint: sh
+    volumes:
+      - name: cloudsql
+        path: /cloudsql
+  - name: gcr.io/cloud-builders/docker
+    args:
+      - '-c'
+      - >-
+        docker ps -q --filter ancestor="${_CLOUD_SQL_PROXY_IMAGE_NAME}" | xargs
+        docker stop
+    id: kill-cloudsql-proxy
+    waitFor:
+      - generate-db-doc
+    entrypoint: sh
+timeout: 900s
+options:
+  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _TAG_NAME: latest
+  _CLOUD_SQL_INSTANCES: 'azoom-taiga-satou:asia-northeast1:tbls-demo'
+  _CLOUD_SQL_PROXY_IMAGE_NAME: 'gcr.io/cloudsql-docker/gce-proxy:1.35.4'
+  _BASE_DIR: /workspace/outputs/antora-db-doc
+  _APP_NAME: antora-db-doc
+  _APP_DOCKER_FILE: cicd/dev/Dockerfile

@@ -67,12 +67,10 @@ steps:
     name: 'k1low/tbls:1.43.1'
     entrypoint: sh
     waitFor: [migrate-database]
-    env: 
-      - 'DSN=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/${_CLOUD_SQL_INSTANCES}'
     args:
       - '-c'
       - |
-        export DSN="mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo"
+        export DSN="mysql://taiga.satou:Z5DG81feVqN6@unix(/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo)/tbls_demo_box"
         tbls doc --config ./.tbls.yml
     volumes:
       - name: cloudsql
