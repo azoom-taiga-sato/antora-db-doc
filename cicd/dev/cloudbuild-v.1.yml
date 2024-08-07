@@ -63,20 +63,20 @@ steps:
         path: /cloudsql
 
 # Generate documentation from the migrated database
-  # - id: generate-db-doc
-  #   name: 'k1low/tbls:1.43.1'
-  #   entrypoint: sh
-  #   waitFor: [migrate-database]
-  #   env: 
-  #     - 'DSN=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/${_CLOUD_SQL_INSTANCES}'
-  #   args:
-  #     - '-c'
-  #     - |
-  #       export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo"
-  #       tbls doc --config ./.tbls.yml
-  #   volumes:
-  #     - name: cloudsql
-  #       path: /cloudsql
+  - id: generate-db-doc
+    name: 'k1low/tbls:1.43.1'
+    entrypoint: sh
+    waitFor: [migrate-database]
+    env: 
+      - 'DSN=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/${_CLOUD_SQL_INSTANCES}'
+    args:
+      - '-c'
+      - |
+        export DSN="=mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo"
+        tbls doc --config ./.tbls.yml
+    volumes:
+      - name: cloudsql
+        path: /cloudsql
       # Commands to run locally
         #docker pull k1low/tbls:1.43.1
         #docker run --platform linux/amd64 k1low/tbls:1.43.1

@@ -1,7 +1,7 @@
 
-dsn: mysql://root@localhost:3306/${DATABASE}
+# dsn: mysql://root@localhost:3306/${DATABASE}
 # dsn: mysql://root:password@localhost:3390/tbls_demo_box
-# dsn: mysql://taiga.satou:Z5DG81feVqN6@localhost/tbls_demo_box?socketPath=/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo
+dsn: ${DSN}
 
 docPath: ./docs/tbls-raw
 
