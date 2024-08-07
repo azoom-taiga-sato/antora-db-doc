@@ -9,13 +9,21 @@ steps:
       - '-c'
       - |
         apt-get update && apt-get install -y rsync git
-        GITHUB_REPO="https://github.com/azoom-taiga-sato/antora-db-doc.git"
         for version_dir in outputs/antora-db-doc/*; do
           if [ -d "$version_dir" ]; then
-            TAG=$(basename "$version_dir")
-            git clone --branch "$TAG" "$GITHUB_REPO" temp_repo
+            echo "Processing version directory: $version_dir with tag"
+            git clone --branch $(basename "$version_dir") https://github.com/azoom-taiga-sato/antora-db-doc.git temp_repo
+            if [ $? -ne 0 ]; then
+              echo "Failed to clone repository for tag"
+              continue
+            fi
             mkdir -p "$version_dir/schemaspy"
             rsync -av temp_repo/docs/schemaspy-raw/ "$version_dir/schemaspy/"
+            if [ $? -ne 0 ]; then
+              echo "Failed to copy files from schemaspy-raw for tag"
+            else
+              echo "Successfully copied files for tag"
+            fi
             rm -rf temp_repo
           fi
         done

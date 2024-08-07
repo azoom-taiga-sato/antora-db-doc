@@ -12,6 +12,7 @@ export const user = mysqlTable("user",{
   password: varchar("password", { length: 255 }).notNull(),
   birthday: date("birthday").notNull(),
   plateNumber: varchar("plate_number", { length: 50 }).notNull(),
+  test: varchar("test", { length: 50 }).notNull(),
   attributeId: bigint("attribute_id", { mode: "number" })
     .references(() => attribute.id)
     .notNull(),
