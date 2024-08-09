@@ -17,7 +17,6 @@ schemaspy.s=${DATABASE_NAME}
 schemaspy.host=${DATABASE_HOST}
 schemaspy.port=${DATABASE_PORT}
 schemaspy.u=${DATABASE_USER}
-schemaspy.p=${DATABASE_PASSWORD}
 schemaspy.o=${SCHEMASPY_OUTPUT_DIR}
 schemaspy.hq=${SCHEMASPY_DOT_PATH}
 schemaspy.imageformat=svg

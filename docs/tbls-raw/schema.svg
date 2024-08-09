@@ -9,12 +9,12 @@
 <g id="graph0" class="graph" transform="scale(1 1) rotate(0) translate(4 762)">
 <title>parking</title>
 <polygon fill="#ffffff" stroke="transparent" points="-4,4 -4,-762 939,-762 939,4 -4,4"/>
-<!-- __drizzle_migrations -->
+<!-- drizzle_migrations -->
 <g id="node1" class="node">
-<title>__drizzle_migrations</title>
+<title>drizzle_migrations</title>
 <polygon fill="#efefef" stroke="transparent" points="43,-544.5 43,-579.5 349,-579.5 349,-544.5 43,-544.5"/>
 <polygon fill="none" stroke="#000000" points="43,-544.5 43,-579.5 349,-579.5 349,-544.5 43,-544.5"/>
-<text text-anchor="start" x="49.7103" y="-557.3" font-family="Arial Bold" font-size="18.00" fill="#000000">__drizzle_migrations</text>
+<text text-anchor="start" x="49.7103" y="-557.3" font-family="Arial Bold" font-size="18.00" fill="#000000">drizzle_migrations</text>
 <text text-anchor="start" x="214.7217" y="-557.3" font-family="Arial" font-size="14.00" fill="#000000">    </text>
 <text text-anchor="start" x="248.9265" y="-557.3" font-family="Arial" font-size="14.00" fill="#666666">[BASE TABLE]</text>
 <polygon fill="none" stroke="#000000" points="43,-514.5 43,-544.5 349,-544.5 349,-514.5 43,-514.5"/>

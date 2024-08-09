@@ -47,7 +47,7 @@ CREATE TABLE `user` (
 | birthday | date |  | false |  |  |  |  |
 | plate_number | varchar(50) |  | false |  |  |  |  |
 | test | varchar(50) |  | false |  |  |  |  |
-| attribute_id | bigint |  | false |  |  | [attribute](attribute.md) |  |
+| attribute_id | bigint |  | false |  |  | [attribute](attribute.html) |  |
 | created_at | timestamp |  | true |  |  |  |  |
 | updated_at | timestamp |  | true |  |  |  |  |
 | deleted_at | timestamp |  | true |  |  |  |  |
@@ -56,7 +56,7 @@ CREATE TABLE `user` (
 
 | Name | Definition |
 | ---- | ---------- |
-| [User情報](viewpoint-0.md) | User情報に関するドキュメント |
+| [User情報](viewpoint-0.html) | User情報に関するドキュメント |
 
 ## Constraints
 
