@@ -80,6 +80,7 @@ jobs:
         run: ./exec-schemaspy.sh ${{ env.VERSION }}
         env:
           DB_NAME: ${{ env.DB_NAME }}
+          TAG_NAME: ${{ env.TAG_NAME }}
 
       - name: Update version in antora.yml
         run: |
