@@ -5,7 +5,19 @@
 .nitro
 .cache
 dist
-.actrc
+
+# Node dependencies
 node_modules
-outputs
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
 .env
+.actrc
+others
