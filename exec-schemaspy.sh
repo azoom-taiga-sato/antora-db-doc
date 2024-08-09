@@ -1,10 +1,13 @@
-# .envファイルの読み込み
-if [ -f .env ]; then
-  source .env
-else
-  echo ".envファイルが見つかりません。"
-  exit 1
+# GitHub Actionsでない場合にのみ.envファイルを読み込む
+if [ -z "$CI" ]; then
+  if [ -f .env ]; then
+    source .env
+  else
+    echo ".envファイルが見つかりません。"
+    exit 1
+  fi
 fi
+
 # schemaspy.propertiesファイルの生成
 cat <<EOL > schemaspy.properties
 schemaspy.t=mysql
