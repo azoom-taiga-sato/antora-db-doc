@@ -26,6 +26,9 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
+      
+      - name: Create Database
+        run: mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
 
       # Database migration (remove "--> statement-breakpoint" if it is included in the migration file)
       - name: Apply Migrations
