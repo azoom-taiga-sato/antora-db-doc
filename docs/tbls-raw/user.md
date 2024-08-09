@@ -10,13 +10,13 @@ Users table
 ```sql
 CREATE TABLE `user` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `email_verified` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `password` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `email` varchar(50) NOT NULL,
+  `email_verified` varchar(50) DEFAULT NULL,
+  `password` varchar(255) NOT NULL,
   `birthday` date NOT NULL,
-  `plate_number` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `test` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `plate_number` varchar(50) NOT NULL,
+  `test` varchar(50) NOT NULL,
   `attribute_id` bigint NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
@@ -26,7 +26,7 @@ CREATE TABLE `user` (
   KEY `user_attribute_id_attribute_id_fk` (`attribute_id`),
   KEY `name_idx` (`name`),
   CONSTRAINT `user_attribute_id_attribute_id_fk` FOREIGN KEY (`attribute_id`) REFERENCES `attribute` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 ```
 
 </details>

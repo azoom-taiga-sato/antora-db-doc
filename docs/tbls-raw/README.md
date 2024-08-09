@@ -10,7 +10,6 @@
 
 | Name | Columns | Comment | Type | Labels |
 | ---- | ------- | ------- | ---- | ------ |
-| [drizzle_migrations](drizzle_migrations.html) | 3 |  | BASE TABLE |  |
 | [attribute](attribute.html) | 4 |  | BASE TABLE |  |
 | [user](user.html) | 12 | Users table | BASE TABLE | `user` `privacy data` |
 
