@@ -5,11 +5,13 @@ steps:
     args:
     - '-c'
     - |
+      pwd
       cd docs/antora-adoc
       if [ ! -d .git ]; then
         git init
       fi
       cd ../..
+      pwd
         
   # Fetch the Antora documentation
   - id: antora-doc-creation

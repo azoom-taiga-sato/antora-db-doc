@@ -1,9 +1,8 @@
 FROM node:20-slim
 
 RUN npm install -g pnpm
-WORKDIR /app
-COPY package.json server.js /app/
+WORKDIR /workspace
+COPY package.json server.js /workspace/
 RUN pnpm install
-COPY outputs/ /app/outputs/
 EXPOSE 8080
 ENTRYPOINT ["node", "server.js"]
