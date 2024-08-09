@@ -8,9 +8,8 @@ steps:
       cd docs/antora-adoc
       if [ ! -d .git ]; then
         git init
-        cd ..
-        cd ..
       fi
+      cd ../..
         
   # Fetch the Antora documentation
   - id: antora-doc-creation
