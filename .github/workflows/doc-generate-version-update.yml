@@ -15,7 +15,7 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: $DB_NAME
+          MYSQL_DATABASE: parking
           MYSQL_ALLOW_EMPTY_PASSWORD: true
         ports:
           - 3306:3306
@@ -26,9 +26,6 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}
-      
-      - name: Create Database
-        run: mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE IF NOT EXISTS $DB_NAME;"
 
       # Database migration (remove "--> statement-breakpoint" if it is included in the migration file)
       - name: Apply Migrations
@@ -37,10 +34,10 @@ jobs:
             if grep -q 'statement-breakpoint' "$file"; then
               tmp_file=$(mktemp)
               sed 's/--> statement-breakpoint//g' "$file" > "$tmp_file"
-              mysql -h 127.0.0.1 -u root $DB_NAME < "$tmp_file" && echo "Applied $file" || exit 1
+              mysql -h 127.0.0.1 -u root parking < "$tmp_file" && echo "Applied $file" || exit 1
               rm "$tmp_file"
             else
-              mysql -h 127.0.0.1 -u root $DB_NAME < "$file" && echo "Applied $file" || exit 1
+              mysql -h 127.0.0.1 -u root parking < "$file" && echo "Applied $file" || exit 1
             fi
           done
 
@@ -51,7 +48,7 @@ jobs:
       # Run tbls doc
       - name: Run tbls doc
         env:
-          DSN: 'mysql://root@localhost:3306/$DB_NAME'
+          DSN: 'mysql://root@localhost:3306/parking'
         run: tbls doc --force
 
       - name: Pull pandoc/core Docker image
