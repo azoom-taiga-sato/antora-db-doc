@@ -1,0 +1,105 @@
+name: Generate Antora Docs & Update Version
+
+on:
+  push:
+
+jobs:
+  doc-creation:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_DATABASE: tbls_demo_box
+          MYSQL_ALLOW_EMPTY_PASSWORD: true
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
+    steps:
+      - name: Checkout head branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.head_ref }}
+
+      # Database migration (remove "--> statement-breakpoint" if it is included in the migration file)
+      - name: Apply Migrations
+        run: |
+          for file in drizzle/migrations/*.sql; do
+            if grep -q 'statement-breakpoint' "$file"; then
+              tmp_file=$(mktemp)
+              sed 's/--> statement-breakpoint//g' "$file" > "$tmp_file"
+              mysql -h 127.0.0.1 -u root tbls_demo_box < "$tmp_file" && echo "Applied $file" || exit 1
+              rm "$tmp_file"
+            else
+              mysql -h 127.0.0.1 -u root tbls_demo_box < "$file" && echo "Applied $file" || exit 1
+            fi
+          done
+
+      # Setup tbls
+      - name: Setup tbls
+        uses: k1low/setup-tbls@v1
+
+      # Run tbls doc
+      - name: Run tbls doc
+        env:
+          DATABASE: tbls_demo_box
+        run: tbls doc --force
+
+      - name: Pull pandoc/core Docker image
+        run: docker pull pandoc/core
+  
+      - name: Set execute permission for the script
+        run: chmod +x convert-tbls-doc.sh
+  
+      - name: Run the script to convert the tbls documentation
+        run: ./convert-tbls-doc.sh
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v3
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
+      - name: Install Graphviz
+        run: sudo apt-get install -y graphviz
+
+      - name: Run SchemaSpy
+        run: java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
+
+      - name: Validate version format
+        id: validate_version
+        run: |
+          if ! [[ "${{ github.event.inputs.new_version }}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Invalid version format. Must follow Semantic Versioning (e.g., 1.0.0)."
+            exit 1
+          fi
+
+      - name: Check if version already exists
+        id: check_version
+        run: |
+          if git rev-parse "refs/tags/${{ github.event.inputs.new_version }}" >/dev/null 2>&1; then
+            echo "Version ${{ github.event.inputs.new_version }} already exists."
+            exit 1
+          fi
+
+      - name: Update version in antora.yml
+        run: |
+          sed -i 's/version: .*/version: '"${{ github.event.inputs.new_version }}"'/' docs/antora-adoc/antora.yml
+
+      - name: Update package.json version
+        run: |
+          npm version ${{ github.event.inputs.new_version }} --no-git-tag-version
+
+      - name: Show git status
+        run: git status
+        
+      - name: Commit changes
+        run: |
+          git config --global user.name 'github-actions'
+          git config --global user.email 'github-actions@github.com'
+          git add .
+          git commit -m "Update doc version to v.${{ github.event.inputs.new_version }}"
+          git tag docv.${{ github.event.inputs.new_version }}
+          git push origin ${{ github.ref_name }} docv.${{ github.event.inputs.new_version }}
+          git push origin HEAD:${{ github.ref_name }}

@@ -1,0 +1,78 @@
+steps:
+  # Fetch the Antora documentation
+  - id: antora-doc-creation
+    name: 'antora/antora'
+    args: 
+      - --fetch
+      - antora-playbook.yml
+      # Commands to run locally
+        # docker run --rm --platform linux/amd64 -v $PWD:/work -w /work antora/antora antora --fetch antora-playbook.yml
+
+  - id: create-schemaspy-index-file
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: [antora-doc-creation]
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        apt-get update && apt-get install -y rsync
+        for version_dir in outputs/antora-db-doc/*; do
+          if [ -d "$version_dir" ]; then
+            mkdir -p "$version_dir/schemaspy"
+            rsync -av docs/schemaspy-raw/ "$version_dir/schemaspy/"
+          fi
+        done
+
+  - id: echo-output-directory
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: [create-schemaspy-index-file]
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        echo "Contents of output directory:"
+        ls -la outputs
+        
+  # Build the app image via DockerFile (Container Registry is used)
+  - id: build-app-image
+    name: 'gcr.io/kaniko-project/executor:latest'
+    waitFor: ['antora-doc-creation']
+    args:
+      - --dockerfile=./cicd/dev/Dockerfile
+      - --destination=gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}
+
+  # Build the app image via DockerFile (Artifact Registry is used)
+  # - id: build-app-image
+  #   name: 'gcr.io/kaniko-project/executor:latest'
+  #   waitFor: ['antora-doc-creation']
+  #   args:
+  #     - --dockerfile=${_APP_DOCKER_FILE}
+  #     - --destination=asia-northeast1-docker.pkg.dev/azoom-taiga-satou/antora-demo:latest
+  #     - --cache=true
+      # Commands to run locally
+        # docker build -t test -f ./cicd/dev/Dockerfile .
+        # docker run -p 8080:8080 test
+
+  # Deploy the app to Cloud Run
+  - id: "deploy"
+    name: gcr.io/cloud-builders/gcloud
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        gcloud beta run deploy ${_APP_NAME} \
+          --platform managed \
+          --region asia-northeast1 \
+          --allow-unauthenticated \
+          --image gcr.io/${PROJECT_ID}/${_APP_NAME}:${_TAG_NAME}
+
+timeout: 900s
+options:
+  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _APP_NAME: antora-db-doc
+  _APP_DOCKER_FILE: cicd/dev/Dockerfile
+  _TAG_NAME: latest
+  _CLOUD_SQL_INSTANCES: azoom-taiga-satou:asia-northeast1:tbls-demo
+  _CLOUD_SQL_PROXY_IMAGE_NAME: 'gcr.io/cloudsql-docker/gce-proxy:1.35.4'
+  _BASE_DIR: outputs/antora-db-doc

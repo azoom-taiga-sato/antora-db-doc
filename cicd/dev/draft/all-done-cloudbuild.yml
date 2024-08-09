@@ -65,12 +65,14 @@ steps:
 # Generate documentation from the migrated database
   - id: generate-db-doc
     name: 'k1low/tbls:1.43.1'
+    waitFor: prepare-socket-folder
     entrypoint: sh
-    waitFor: [migrate-database]
+    env:
+      - >-
+        DSN="mysql://taiga.satou:Z5DG81feVqN6@unix(/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo)/tbls_demo_box"
     args:
       - '-c'
       - |
-        export DSN="mysql://taiga.satou:Z5DG81feVqN6@unix(/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo)/tbls_demo_box"
         tbls doc --config ./.tbls.yml
     volumes:
       - name: cloudsql
