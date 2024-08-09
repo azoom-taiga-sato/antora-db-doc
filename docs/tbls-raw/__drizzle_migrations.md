@@ -1,4 +1,4 @@
-# drizzle_migrations
+# __drizzle_migrations
 
 ## Description
 
@@ -6,7 +6,7 @@
 <summary><strong>Table Definition</strong></summary>
 
 ```sql
-CREATE TABLE `drizzle_migrations` (
+CREATE TABLE `__drizzle_migrations` (
   `id` bigint unsigned NOT NULL AUTO_INCREMENT,
   `hash` text COLLATE utf8mb4_unicode_ci NOT NULL,
   `created_at` bigint DEFAULT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE `drizzle_migrations` (
 
 ## Relations
 
-![er](drizzle_migrations.svg)
+![er](__drizzle_migrations.svg)
 
 ---
 

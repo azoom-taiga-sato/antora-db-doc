@@ -46,6 +46,7 @@ jobs:
       - name: Run tbls doc
         env:
           DATABASE: tbls_demo_box
+          DSN: 'mysql://root@localhost:3306/${{ env.DATABASE }}'
         run: tbls doc --force
 
       - name: Pull pandoc/core Docker image

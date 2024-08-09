@@ -22,7 +22,7 @@ CREATE TABLE `attribute` (
 
 | Name | Type | Default | Nullable | Extra Definition | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | ---------------- | -------- | ------- | ------- |
-| id | bigint |  | false | auto_increment | [user](user.html) |  |  |
+| id | bigint |  | false | auto_increment | [user](user.md) |  |  |
 | name | varchar(50) |  | false |  |  |  |  |
 | created_at | timestamp |  | true |  |  |  |  |
 | updated_at | timestamp |  | true |  |  |  |  |
