@@ -8,8 +8,8 @@ content:
     # tags: docv.*
     # branches: ~
     # branches: [main, test]
-    # start_path: docs/antora-adoc
-    start_page: .
+    start_path: docs/antora-adoc
+    # start_page: .
     edit_url: false
 asciidoc:
   attributes:
