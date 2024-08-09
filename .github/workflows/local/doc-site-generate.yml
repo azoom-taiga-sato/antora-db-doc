@@ -8,7 +8,7 @@ env:
   DATABASE_NAME: parking
 
 jobs:
-  doc-site-creation:
+  doc-creation:
     runs-on: ubuntu-latest
 
     services:
@@ -80,7 +80,7 @@ jobs:
         run: ./exec-schemaspy.sh ${{ env.TAG_NAME }}
         env:
           TAG_NAME: ${{ env.TAG_NAME }}
-          DATABASE_NAME: ${{ env.DBTABASE_NAME }}
+          DATABASE_NAME: ${{ env.DATABASE_NAME }}
           DATABASE_HOST: 'localhost'
           DATABASE_PORT: '3306'
           DATABASE_USER: 'root'
@@ -91,13 +91,3 @@ jobs:
       - name: Update version in antora.yml
         run: |
           sed -i 's/version: .*/version: '"${{ env.TAG_NAME }}"'/' docs/antora-adoc/antora.yml
-        
-      - name: Commit changes
-        run: |
-          git config --global user.name 'github-actions'
-          git config --global user.email 'github-actions@github.com'
-          git add .
-          git commit -m "Update doc version to ${{ env.TAG_NAME }}"
-          git tag ${{ env.TAG_NAME }}
-          git push origin ${{ github.ref_name }} ${{ env.TAG_NAME }}
-          git push origin HEAD:${{ github.ref_name }}

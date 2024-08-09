@@ -41,7 +41,12 @@ INDEX_FILE="$OUTPUT_DIR/index.html"
 
 if [ -f "${INDEX_FILE}" ];then
   # .${DATABASE_NAME}を.$VERSIONに置き換え
+  if [[ "$OSTYPE" == "darwin"* ]]; then
   sed -i '' "s|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${DATABASE_NAME}</span>|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${VERSION}</span>|" "${INDEX_FILE}"
+  else
+  sed -i "s|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${DATABASE_NAME}</span>|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${VERSION}</span>|" "${INDEX_FILE}"
+  fi
+  
 fi
 
 # schemaspy.propertiesファイルの削除
