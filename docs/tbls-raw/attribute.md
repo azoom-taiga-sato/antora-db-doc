@@ -8,12 +8,12 @@
 ```sql
 CREATE TABLE `attribute` (
   `id` bigint NOT NULL AUTO_INCREMENT,
-  `name` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `name` varchar(50) NOT NULL,
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `name_idx` (`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
 ```
 
 </details>
@@ -22,7 +22,7 @@ CREATE TABLE `attribute` (
 
 | Name | Type | Default | Nullable | Extra Definition | Children | Parents | Comment |
 | ---- | ---- | ------- | -------- | ---------------- | -------- | ------- | ------- |
-| id | bigint |  | false | auto_increment | [user](user.md) |  |  |
+| id | bigint |  | false | auto_increment | [user](user.html) |  |  |
 | name | varchar(50) |  | false |  |  |  |  |
 | created_at | timestamp |  | true |  |  |  |  |
 | updated_at | timestamp |  | true |  |  |  |  |
