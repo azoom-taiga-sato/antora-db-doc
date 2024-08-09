@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>tbls_demo_box.tbls_demo_box</title>
+        <title>parking.parking</title>
         <!-- Tell the browser to be responsive to screen width -->
         <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
         <link rel="icon" type="image/png" sizes="16x16" href="favicon.png">
@@ -46,7 +46,7 @@
                 <nav class="navbar navbar-static-top">
                     <div class="container">
                         <div class="navbar-header">
-                            <a href="index.html" class="navbar-brand"><b>tbls_demo_box</b></a><span class="navbar-brand" style="padding-left: 0">.tbls_demo_box</span>
+                            <a href="index.html" class="navbar-brand"><b>parking</b></a><span class="navbar-brand" style="padding-left: 0">.parking</span>
                             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse"><i class="fa fa-bars"></i></button>
                         </div>
 
@@ -111,98 +111,28 @@
                 <script>
                     var tableData = [
     {
+        "tableName": "__drizzle_migrations",
+        "tableFileName": "__drizzle_migrations",
+        "tableType": "Table",
+        "keyClass": "",
+        "keyTitle": "",
+        "name": "hash",
+        "type": "TEXT",
+        "length": 65535,
+        "nullable": "",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
         "tableName": "user",
         "tableFileName": "user",
         "tableType": "Table",
-        "keyClass": "indexedColumn",
-        "keyTitle": "Indexed",
-        "name": "<i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'><\/i>name",
+        "keyClass": "",
+        "keyTitle": "",
+        "name": "test",
         "type": "VARCHAR",
         "length": 50,
-        "nullable": "",
-        "autoUpdated": "",
-        "defaultValue": "null",
-        "comments": ""
-    },
-    {
-        "tableName": "user",
-        "tableFileName": "user",
-        "tableType": "Table",
-        "keyClass": "",
-        "keyTitle": "",
-        "name": "birthday",
-        "type": "DATE",
-        "length": 10,
-        "nullable": "",
-        "autoUpdated": "",
-        "defaultValue": "null",
-        "comments": ""
-    },
-    {
-        "tableName": "attribute",
-        "tableFileName": "attribute",
-        "tableType": "Table",
-        "keyClass": "",
-        "keyTitle": "",
-        "name": "updated_at",
-        "type": "TIMESTAMP",
-        "length": 19,
-        "nullable": "√",
-        "autoUpdated": "",
-        "defaultValue": "null",
-        "comments": ""
-    },
-    {
-        "tableName": "user",
-        "tableFileName": "user",
-        "tableType": "Table",
-        "keyClass": "",
-        "keyTitle": "",
-        "name": "password",
-        "type": "VARCHAR",
-        "length": 255,
-        "nullable": "",
-        "autoUpdated": "",
-        "defaultValue": "null",
-        "comments": ""
-    },
-    {
-        "tableName": "user",
-        "tableFileName": "user",
-        "tableType": "Table",
-        "keyClass": "",
-        "keyTitle": "",
-        "name": "plate_number",
-        "type": "VARCHAR",
-        "length": 50,
-        "nullable": "",
-        "autoUpdated": "",
-        "defaultValue": "null",
-        "comments": ""
-    },
-    {
-        "tableName": "attribute",
-        "tableFileName": "attribute",
-        "tableType": "Table",
-        "keyClass": "indexedColumn",
-        "keyTitle": "Indexed",
-        "name": "<i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'><\/i>name",
-        "type": "VARCHAR",
-        "length": 50,
-        "nullable": "",
-        "autoUpdated": "",
-        "defaultValue": "null",
-        "comments": ""
-    },
-    {
-        "tableName": "user",
-        "tableFileName": "user",
-        "tableType": "Table",
-        "keyClass": "foreignKey",
-        "keyTitle": "Foreign Key",
-        "name": "<i class='icon ion-key iconkey' style='padding-left: 5px;'><\/i>attribute_id",
-        "type": "BIGINT",
-        "length": 19,
         "nullable": "",
         "autoUpdated": "",
         "defaultValue": "null",
@@ -219,6 +149,48 @@
         "length": 19,
         "nullable": "",
         "autoUpdated": "√",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "user",
+        "tableFileName": "user",
+        "tableType": "Table",
+        "keyClass": "indexedColumn",
+        "keyTitle": "Indexed",
+        "name": "<i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'><\/i>name",
+        "type": "VARCHAR",
+        "length": 50,
+        "nullable": "",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "attribute",
+        "tableFileName": "attribute",
+        "tableType": "Table",
+        "keyClass": "indexedColumn",
+        "keyTitle": "Indexed",
+        "name": "<i class='fa fa-sitemap fa-rotate-120' style='padding-right: 5px;'><\/i>name",
+        "type": "VARCHAR",
+        "length": 50,
+        "nullable": "",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "user",
+        "tableFileName": "user",
+        "tableType": "Table",
+        "keyClass": "",
+        "keyTitle": "",
+        "name": "created_at",
+        "type": "TIMESTAMP",
+        "length": 19,
+        "nullable": "√",
+        "autoUpdated": "",
         "defaultValue": "null",
         "comments": ""
     },
@@ -242,9 +214,65 @@
         "tableType": "Table",
         "keyClass": "",
         "keyTitle": "",
+        "name": "plate_number",
+        "type": "VARCHAR",
+        "length": 50,
+        "nullable": "",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "__drizzle_migrations",
+        "tableFileName": "__drizzle_migrations",
+        "tableType": "Table",
+        "keyClass": "primaryKey",
+        "keyTitle": "Primary Key",
+        "name": "<i class='icon ion-key iconkey' style='padding-left: 5px;'><\/i>id",
+        "type": "BIGINT UNSIGNED",
+        "length": 20,
+        "nullable": "",
+        "autoUpdated": "√",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "user",
+        "tableFileName": "user",
+        "tableType": "Table",
+        "keyClass": "",
+        "keyTitle": "",
+        "name": "birthday",
+        "type": "DATE",
+        "length": 10,
+        "nullable": "",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "user",
+        "tableFileName": "user",
+        "tableType": "Table",
+        "keyClass": "",
+        "keyTitle": "",
         "name": "updated_at",
         "type": "TIMESTAMP",
         "length": 19,
+        "nullable": "√",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "user",
+        "tableFileName": "user",
+        "tableType": "Table",
+        "keyClass": "",
+        "keyTitle": "",
+        "name": "email_verified",
+        "type": "VARCHAR",
+        "length": 50,
         "nullable": "√",
         "autoUpdated": "",
         "defaultValue": "null",
@@ -270,10 +298,52 @@
         "tableType": "Table",
         "keyClass": "",
         "keyTitle": "",
-        "name": "created_at",
+        "name": "deleted_at",
         "type": "TIMESTAMP",
         "length": 19,
         "nullable": "√",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "user",
+        "tableFileName": "user",
+        "tableType": "Table",
+        "keyClass": "foreignKey",
+        "keyTitle": "Foreign Key",
+        "name": "<i class='icon ion-key iconkey' style='padding-left: 5px;'><\/i>attribute_id",
+        "type": "BIGINT",
+        "length": 19,
+        "nullable": "",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "__drizzle_migrations",
+        "tableFileName": "__drizzle_migrations",
+        "tableType": "Table",
+        "keyClass": "",
+        "keyTitle": "",
+        "name": "created_at",
+        "type": "BIGINT",
+        "length": 19,
+        "nullable": "√",
+        "autoUpdated": "",
+        "defaultValue": "null",
+        "comments": ""
+    },
+    {
+        "tableName": "user",
+        "tableFileName": "user",
+        "tableType": "Table",
+        "keyClass": "",
+        "keyTitle": "",
+        "name": "password",
+        "type": "VARCHAR",
+        "length": 255,
+        "nullable": "",
         "autoUpdated": "",
         "defaultValue": "null",
         "comments": ""
@@ -293,26 +363,12 @@
         "comments": ""
     },
     {
-        "tableName": "user",
-        "tableFileName": "user",
+        "tableName": "attribute",
+        "tableFileName": "attribute",
         "tableType": "Table",
         "keyClass": "",
         "keyTitle": "",
-        "name": "email_verified",
-        "type": "VARCHAR",
-        "length": 50,
-        "nullable": "√",
-        "autoUpdated": "",
-        "defaultValue": "null",
-        "comments": ""
-    },
-    {
-        "tableName": "user",
-        "tableFileName": "user",
-        "tableType": "Table",
-        "keyClass": "",
-        "keyTitle": "",
-        "name": "deleted_at",
+        "name": "updated_at",
         "type": "TIMESTAMP",
         "length": 19,
         "nullable": "√",

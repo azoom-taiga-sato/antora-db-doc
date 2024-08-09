@@ -69,14 +69,17 @@ jobs:
       - name: Install Graphviz
         run: sudo apt-get install -y graphviz
 
-      - name: Run SchemaSpy
-        env:
-          DATABASE_NAME: ${{ env.DB_NAME }}
-        run: java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
-
       - name: Set tag name
         id: set_tag_name
         run: echo "TAG_NAME=docv-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+
+      - name: Set execute permission for the script
+        run: chmod +x exec-schemaspy.sh
+      
+      - name: Run the script to generate SchemaSpy documentation
+        run: ./exec-schemaspy.sh ${{ env.VERSION }}
+        env:
+          DB_NAME: ${{ env.DB_NAME }}
 
       - name: Update version in antora.yml
         run: |
