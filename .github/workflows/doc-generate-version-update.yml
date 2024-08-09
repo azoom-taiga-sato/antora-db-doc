@@ -8,11 +8,13 @@ on:
 jobs:
   doc-creation:
     runs-on: ubuntu-latest
+    env:
+      DB_NAME: parking
     services:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: tbls_demo_box
+          MYSQL_DATABASE: $DB_NAME
           MYSQL_ALLOW_EMPTY_PASSWORD: true
         ports:
           - 3306:3306
@@ -31,10 +33,10 @@ jobs:
             if grep -q 'statement-breakpoint' "$file"; then
               tmp_file=$(mktemp)
               sed 's/--> statement-breakpoint//g' "$file" > "$tmp_file"
-              mysql -h 127.0.0.1 -u root tbls_demo_box < "$tmp_file" && echo "Applied $file" || exit 1
+              mysql -h 127.0.0.1 -u root $DB_NAME < "$tmp_file" && echo "Applied $file" || exit 1
               rm "$tmp_file"
             else
-              mysql -h 127.0.0.1 -u root tbls_demo_box < "$file" && echo "Applied $file" || exit 1
+              mysql -h 127.0.0.1 -u root $DB_NAME < "$file" && echo "Applied $file" || exit 1
             fi
           done
 
@@ -45,7 +47,7 @@ jobs:
       # Run tbls doc
       - name: Run tbls doc
         env:
-          DSN: 'mysql://root@localhost:3306/tbls_demo_box'
+          DSN: 'mysql://root@localhost:3306/$DB_NAME'
         run: tbls doc --force
 
       - name: Pull pandoc/core Docker image
@@ -71,7 +73,7 @@ jobs:
 
       - name: Set tag name
         id: set_tag_name
-        run: echo "TAG_NAME=doc-push-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+        run: echo "TAG_NAME=docv-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
 
       - name: Update version in antora.yml
         run: |
@@ -82,7 +84,7 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add .
-          git commit -m "Update doc version to docv.${{ env.TAG_NAME }}"
-          git tag docv.${{ env.TAG_NAME }}
-          git push origin ${{ github.ref_name }} docv.${{ env.TAG_NAME }}
+          git commit -m "Update doc version to ${{ env.TAG_NAME }}"
+          git tag ${{ env.TAG_NAME }}
+          git push origin ${{ github.ref_name }} ${{ env.TAG_NAME }}
           git push origin HEAD:${{ github.ref_name }}
