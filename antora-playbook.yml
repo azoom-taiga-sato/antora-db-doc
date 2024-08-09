@@ -3,8 +3,8 @@ site:
   start_page: antora-db-doc::index.adoc
 content:
   sources:
-  # - url: https://github.com/azoom-taiga-sato/antora-db-doc.git
-  - url: docs/antora-adoc
+  - url: https://github.com/azoom-taiga-sato/antora-db-doc.git
+  # - url: docs/antora-adoc
     # tags: docv.*
     # branches: ~
     # branches: [main, test]

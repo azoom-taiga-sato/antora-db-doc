@@ -1,17 +1,15 @@
 steps:
-  - id: init git for docs/antora-adoc
-    name: 'gcr.io/cloud-builders/git'
-    entrypoint: 'bash'
-    args:
-    - '-c'
-    - |
-      pwd
-      cd docs/antora-adoc
-      if [ ! -d .git ]; then
-        git init
-      fi
-      cd ../..
-      pwd
+  # - id: init git for docs/antora-adoc
+  #   name: 'gcr.io/cloud-builders/git'
+  #   entrypoint: 'bash'
+  #   args:
+  #   - '-c'
+  #   - |
+  #     cd docs/antora-adoc
+  #     if [ ! -d .git ]; then
+  #       git init
+  #     fi
+  #     cd ../..
         
   # Fetch the Antora documentation
   - id: antora-doc-creation
@@ -54,8 +52,8 @@ steps:
     args:
     - '-c'
     - |
-      ls -l
-      ls -l outputs/
+        echo "Listing contents of /workspace/outputs:"
+        find /workspace/outputs/ -print
 
   # Build the app image via DockerFile (Container Registry is used)
   - id: build-app-image
