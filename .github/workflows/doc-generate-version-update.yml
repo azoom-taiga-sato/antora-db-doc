@@ -77,7 +77,7 @@ jobs:
         run: chmod +x exec-schemaspy.sh
       
       - name: Run the script to generate SchemaSpy documentation
-        run: ./exec-schemaspy.sh ${{ env.VERSION }}
+        run: ./exec-schemaspy.sh ${{ env.TAG_NAME }}
         env:
           DB_NAME: ${{ env.DB_NAME }}
           TAG_NAME: ${{ env.TAG_NAME }}
