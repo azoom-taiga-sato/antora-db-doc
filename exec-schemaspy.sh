@@ -34,19 +34,30 @@ VERSION=$1
 
 # SchemaSpyの実行
 java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
+if [ $? -ne 0 ]; then
+  echo "SchemaSpyの実行に失敗しました。"
+  exit 1
+fi
 
 # 出力ディレクトリとファイルの設定
 OUTPUT_DIR="./docs/schemaspy-raw"
 INDEX_FILE="$OUTPUT_DIR/index.html"
 
-if [ -f "${INDEX_FILE}" ];then
+if [ -f "${INDEX_FILE}" ]; then
   # .${DATABASE_NAME}を.$VERSIONに置き換え
   if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i '' "s|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${DATABASE_NAME}</span>|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${VERSION}</span>|" "${INDEX_FILE}"
+    sed -i '' "s|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${DATABASE_NAME}</span>|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${VERSION}</span>|" "${INDEX_FILE}"
+    if [ $? -ne 0 ]; then
+      echo "sedコマンドの実行に失敗しました。"
+      exit 1
+    fi
   else
-  sed -i "s|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${DATABASE_NAME}</span>|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${VERSION}</span>|" "${INDEX_FILE}"
+    sed -i "s|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${DATABASE_NAME}</span>|<span class=\"navbar-brand\" style=\"padding-left: 0\">.${VERSION}</span>|" "${INDEX_FILE}"
+    if [ $? -ne 0 ]; then
+      echo "sedコマンドの実行に失敗しました。"
+      exit 1
+    fi
   fi
-  
 fi
 
 # schemaspy.propertiesファイルの削除

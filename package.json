@@ -15,18 +15,18 @@
     "db-generate": "npx drizzle-kit generate",
     "db-migrate": "npx drizzle-kit migrate",
     "db-studio": "npx drizzle-kit studio",
-    "db-ref": "docker-compose exec mysql bash",
-    "doc-create-local": "act -j doc-site-creation -W ./.github/workflows/local/doc-site-generate.yml -b"
+    "db-ref": "docker-compose exec mysql bash"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/azoom-taiga-sato/antora-db-doc.git"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "dotenv": "^16.4.5",
     "drizzle-kit": "^0.23.0",
     "drizzle-orm": "^0.32.0",
     "drizzle-zod": "^0.5.1",
+    "express": "^4.17.1",
     "jiti": "^1.21.6",
     "mysql2": "^3.10.3",
     "nuxt": "^3.12.4",

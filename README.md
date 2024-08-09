@@ -29,6 +29,15 @@
     ```
     * 各セクションは別リポジトリで管理しても問題ない。
 
+## Antora Docをローカルで生成
+1. 対象フォルダをgitで管理
+  ```bash
+  $ cd docs/antora-adoc
+  $ git init
+  $ git add .
+  $ git commit -m "Initial commit"
+  ```
+
 ## Antoraとは
 * Javaベースで実装されるサイト生成ツール。
 * AsciiDoc形式のファイルを読み込み、ドキュメントを生成
