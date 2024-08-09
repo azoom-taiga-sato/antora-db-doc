@@ -8,3 +8,4 @@ dist
 .actrc
 node_modules
 outputs
+.env
