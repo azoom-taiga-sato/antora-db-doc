@@ -23,12 +23,13 @@
          <column autoUpdated="false" defaultValue="null" digits="0" id="4" name="password" nullable="false" remarks="" size="255" type="VARCHAR" typeCode="12"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="5" name="birthday" nullable="false" remarks="" size="10" type="DATE" typeCode="91"/>
          <column autoUpdated="false" defaultValue="null" digits="0" id="6" name="plate_number" nullable="false" remarks="" size="50" type="VARCHAR" typeCode="12"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="attribute_id" nullable="false" remarks="" size="19" type="BIGINT" typeCode="-5">
+         <column autoUpdated="false" defaultValue="null" digits="0" id="7" name="test" nullable="false" remarks="" size="50" type="VARCHAR" typeCode="12"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="attribute_id" nullable="false" remarks="" size="19" type="BIGINT" typeCode="-5">
             <parent catalog="tbls_demo_box" column="id" foreignKey="user_attribute_id_attribute_id_fk" implied="false" onDeleteCascade="false" table="attribute"/>
          </column>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="8" name="created_at" nullable="true" remarks="" size="19" type="TIMESTAMP" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="updated_at" nullable="true" remarks="" size="19" type="TIMESTAMP" typeCode="93"/>
-         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="deleted_at" nullable="true" remarks="" size="19" type="TIMESTAMP" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="9" name="created_at" nullable="true" remarks="" size="19" type="TIMESTAMP" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="10" name="updated_at" nullable="true" remarks="" size="19" type="TIMESTAMP" typeCode="93"/>
+         <column autoUpdated="false" defaultValue="null" digits="0" id="11" name="deleted_at" nullable="true" remarks="" size="19" type="TIMESTAMP" typeCode="93"/>
          <primaryKey column="id" sequenceNumberInPK="1"/>
          <index name="PRIMARY" unique="true">
             <column ascending="true" name="id"/>
