@@ -1,6 +1,6 @@
 
-dsn: mysql://root@localhost:3306/${DATABASE}
-# dsn: mysql://root:password@localhost:3390/tbls_demo_box
+# dsn: mysql://root@localhost:3306/${DATABASE}
+dsn: mysql://root:password@localhost:3309/parking
 # dsn: ${DSN}
 
 docPath: ./docs/tbls-raw

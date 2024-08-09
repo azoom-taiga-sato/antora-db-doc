@@ -1,0 +1,25 @@
+name: database-creation
+services:
+  mysql:
+    container_name: ${COMPOSE_PROJECT_NAME}_mysql
+    image: mysql:8.0
+    ports:
+      - 127.0.0.1:3309:3306
+    volumes:
+            - mysql-data:/var/lib/mysql
+    environment:
+      MYSQL_DATABASE: ${DATABASE_NAME}
+      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+    command:
+      [
+          "--character-set-server=utf8mb4",
+          "--collation-server=utf8mb4_unicode_ci",
+          "--default-authentication-plugin=mysql_native_password",
+      ]
+    healthcheck:
+      test: "mysqladmin ping -h 127.0.0.1 -u root -p$$DATABASE_PASSWORD"
+      timeout: 5s
+      interval: 5s
+      retries: 10
+volumes:
+  mysql-data:

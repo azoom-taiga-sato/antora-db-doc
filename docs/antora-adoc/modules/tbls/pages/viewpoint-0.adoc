@@ -9,7 +9,7 @@ User情報に関するドキュメント
 [width="99%",cols="15%,25%,25%,14%,21%",options="header",]
 |===
 |Name |Columns |Comment |Type |Labels
-|link:user.html[user] |11 |Users table |BASE TABLE |`+user+`
+|link:user.html[user] |12 |Users table |BASE TABLE |`+user+`
 `+privacy data+`
 |===
 

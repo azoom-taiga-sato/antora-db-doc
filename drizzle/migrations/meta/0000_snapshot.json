@@ -1,7 +1,7 @@
 {
   "version": "5",
   "dialect": "mysql",
-  "id": "602a3dd6-f5c2-487f-901e-0c509f799a59",
+  "id": "595a9ba6-0e13-4c7e-81bf-232c7421c58f",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "tables": {
     "attribute": {
@@ -103,6 +103,13 @@
         },
         "plate_number": {
           "name": "plate_number",
+          "type": "varchar(50)",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "test": {
+          "name": "test",
           "type": "varchar(50)",
           "primaryKey": false,
           "notNull": true,

@@ -1,3 +1,10 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
 .actrc
 node_modules
 outputs

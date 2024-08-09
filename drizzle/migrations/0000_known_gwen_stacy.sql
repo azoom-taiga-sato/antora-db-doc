@@ -14,6 +14,7 @@ CREATE TABLE `user` (
 	`password` varchar(255) NOT NULL,
 	`birthday` date NOT NULL,
 	`plate_number` varchar(50) NOT NULL,
+	`test` varchar(50) NOT NULL,
 	`attribute_id` bigint NOT NULL,
 	`created_at` timestamp,
 	`updated_at` timestamp,

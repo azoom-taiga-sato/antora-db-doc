@@ -1,4 +1,5 @@
 * xref:README.adoc[]
+** xref:viewpoint-0.adoc[]
 ** xref:attribute.adoc[]
 ** xref:user.adoc[]
-** xref:viewpoint-0.adoc[]
+** xref:drizzle_migrations.adoc[]
