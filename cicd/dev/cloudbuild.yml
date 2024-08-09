@@ -47,7 +47,16 @@ steps:
             echo "Version directory $version_dir does not exist."
           fi
         done
-        
+
+  - id: check folders and files
+    name: 'gcr.io/cloud-builders/git'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      ls -l
+      ls -l outputs
+      
   # Build the app image via DockerFile (Container Registry is used)
   - id: build-app-image
     name: 'gcr.io/kaniko-project/executor:latest'
