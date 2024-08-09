@@ -33,13 +33,13 @@ steps:
       - name: cloudsql
         path: /cloudsql
   - name: 'k1low/tbls:1.43.1'
+    env:
+      - >-
+        DSN="mysql://taiga.satou:Z5DG81feVqN6@unix(/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo)/tbls_demo_box"
     args:
       - '-c'
-      - >
-        export
-        DSN="mysql://taiga.satou:Z5DG81feVqN6@unix(/cloudsql/azoom-taiga-satou:asia-northeast1:tbls-demo)/tbls_demo_box"
-
-        tbls doc --config ./.tbls.yml
+      - |
+        sleep 20s && tbls doc --config ./.tbls.yml
     id: generate-db-doc
     waitFor:
       - prepare-socket-folder
