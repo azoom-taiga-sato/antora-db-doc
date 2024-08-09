@@ -5,7 +5,7 @@ on:
     branches-ignore:
       - main
 env:
-  DB_NAME: parking
+  DATABASE_NAME: parking
 
 jobs:
   doc-creation:
@@ -15,7 +15,7 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: ${{ env.DB_NAME }}
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
           MYSQL_ALLOW_EMPTY_PASSWORD: true
         ports:
           - 3306:3306
@@ -34,10 +34,10 @@ jobs:
             if grep -q 'statement-breakpoint' "$file"; then
               tmp_file=$(mktemp)
               sed 's/--> statement-breakpoint//g' "$file" > "$tmp_file"
-              mysql -h 127.0.0.1 -u root ${{ env.DB_NAME }} < "$tmp_file" && echo "Applied $file" || exit 1
+              mysql -h 127.0.0.1 -u root ${{ env.DATABASE_NAME }} < "$tmp_file" && echo "Applied $file" || exit 1
               rm "$tmp_file"
             else
-              mysql -h 127.0.0.1 -u root ${{ env.DB_NAME }} < "$file" && echo "Applied $file" || exit 1
+              mysql -h 127.0.0.1 -u root ${{ env.DATABASE_NAME }} < "$file" && echo "Applied $file" || exit 1
             fi
           done
 
@@ -79,8 +79,8 @@ jobs:
       - name: Run the script to generate SchemaSpy documentation
         run: ./exec-schemaspy.sh ${{ env.TAG_NAME }}
         env:
-          DB_NAME: ${{ env.DB_NAME }}
           TAG_NAME: ${{ env.TAG_NAME }}
+          DATABASE_NAME: ${{ env.DB_NAME }}
           DATABASE_HOST: 'localhost'
           DATABASE_PORT: '3306'
           DATABASE_USER: 'root'
