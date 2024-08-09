@@ -15,7 +15,8 @@
     "db-generate": "npx drizzle-kit generate",
     "db-migrate": "npx drizzle-kit migrate",
     "db-studio": "npx drizzle-kit studio",
-    "db-ref": "docker-compose exec mysql bash"
+    "db-ref": "docker-compose exec mysql bash",
+    "doc-create-local": "act -j doc-site-creation -W ./.github/workflows/local/doc-site-generate.yml -b"
   },
   "repository": {
     "type": "git",
