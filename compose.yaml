@@ -9,7 +9,7 @@ services:
             - mysql-data:/var/lib/mysql
     environment:
       MYSQL_DATABASE: ${DATABASE_NAME}
-      MYSQL_ROOT_PASSWORD: ${DATABASE_PASSWORD}
+      MYSQL_ALLOW_EMPTY_PASSWORD: yes
     command:
       [
           "--character-set-server=utf8mb4",
@@ -17,7 +17,7 @@ services:
           "--default-authentication-plugin=mysql_native_password",
       ]
     healthcheck:
-      test: "mysqladmin ping -h 127.0.0.1 -u root -p$$DATABASE_PASSWORD"
+      test: "mysqladmin ping -h 127.0.0.1 -u root"
       timeout: 5s
       interval: 5s
       retries: 10

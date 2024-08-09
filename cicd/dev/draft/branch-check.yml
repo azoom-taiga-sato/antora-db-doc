@@ -1,0 +1,39 @@
+steps:
+  - id: create-schemaspy-index-file-each-branch
+    name: 'gcr.io/cloud-builders/gcloud'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          echo "Fetching all branches..."
+          git fetch --all
+          for branch in $(git branch -r | grep -v '\->'); do
+            branch_name=$(echo $branch | sed 's/origin\///')
+            echo "Checking out branch: $branch_name"
+            git checkout $branch_name
+            version=$(grep 'version:' docs/antora-adoc/antora.yml | sed 's/version: //')
+            echo "Version in antora.yml is $version"
+            if [ -z "$version" ]; then
+              echo "Failed to retrieve version from antora.yml"
+              exit 1
+            fi
+            version_dir="outputs/$version"
+            if [ -d "$version_dir" ]; then
+              echo "Creating schemaspy directory for version $version"
+              mkdir -p "$version_dir/schemaspy"
+              rsync -av docs/schemaspy-raw/ "$version_dir/schemaspy/"
+            else
+              echo "Version directory $version_dir does not exist."
+            fi
+          done
+
+timeout: 900s
+options:
+  logging: CLOUD_LOGGING_ONLY
+substitutions:
+  _APP_NAME: antora-db-doc
+  _APP_DOCKER_FILE: cicd/dev/Dockerfile
+  _TAG_NAME: latest
+  _CLOUD_SQL_INSTANCES: azoom-taiga-satou:asia-northeast1:tbls-demo
+  _CLOUD_SQL_PROXY_IMAGE_NAME: 'gcr.io/cloudsql-docker/gce-proxy:1.35.4'
+  _BASE_DIR: outputs/antora-db-doc

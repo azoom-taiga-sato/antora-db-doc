@@ -1,51 +1,37 @@
 steps:
-  - id: init git for docs/antora-adoc
-    name: 'gcr.io/cloud-builders/git'
-    entrypoint: 'bash'
-    args:
-    - '-c'
-    - |
-      cd docs/antora-adoc
-      if [ ! -d .git ]; then
-        git init
-        cd ..
-        cd ..
-      fi
-        
   # Fetch the Antora documentation
   - id: antora-doc-creation
     name: 'antora/antora'
     args: 
       - --fetch
       - antora-playbook.yml
+      # Commands to run locally
+        # docker run --rm --platform linux/amd64 -v $PWD:/work -w /work antora/antora antora --fetch antora-playbook.yml
 
-  - id: create-schemaspy-index-file-each-branch
+  - id: create-schemaspy-index-file
     name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: [antora-doc-creation]
     entrypoint: 'sh'
     args:
       - '-c'
       - |
-        echo "Fetching all branches..."
-        git fetch --all
-        for branch in $(git branch -r | grep -v '\->'); do
-          branch_name=$(echo $branch | sed 's/origin\///')
-          echo "Checking out branch: $branch_name"
-          git checkout $branch_name
-          version=$(grep 'version:' docs/antora-adoc/antora.yml | sed 's/version: //')
-          echo "Version in antora.yml is $version"
-          if [ -z "$version" ]; then
-            echo "Failed to retrieve version from antora.yml"
-            exit 1
-          fi
-          version_dir="outputs/$version"
+        apt-get update && apt-get install -y rsync
+        for version_dir in outputs/antora-db-doc/*; do
           if [ -d "$version_dir" ]; then
-            echo "Creating schemaspy directory for version $version"
             mkdir -p "$version_dir/schemaspy"
             rsync -av docs/schemaspy-raw/ "$version_dir/schemaspy/"
-          else
-            echo "Version directory $version_dir does not exist."
           fi
         done
+
+  - id: echo-output-directory
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: [create-schemaspy-index-file]
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        echo "Contents of output directory:"
+        ls -la outputs
         
   # Build the app image via DockerFile (Container Registry is used)
   - id: build-app-image

@@ -22,10 +22,11 @@
     "url": "git+https://github.com/azoom-taiga-sato/antora-db-doc.git"
   },
   "dependencies": {
-    "express": "^4.17.1",
+    "dotenv": "^16.4.5",
     "drizzle-kit": "^0.23.0",
     "drizzle-orm": "^0.32.0",
     "drizzle-zod": "^0.5.1",
+    "express": "^4.17.1",
     "jiti": "^1.21.6",
     "mysql2": "^3.10.3",
     "nuxt": "^3.12.4",

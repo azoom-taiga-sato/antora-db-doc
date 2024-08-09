@@ -4,15 +4,18 @@ on:
   push:
     branches-ignore:
       - main
+env:
+  DATABASE_NAME: parking
 
 jobs:
   doc-creation:
     runs-on: ubuntu-latest
+
     services:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_DATABASE: tbls_demo_box
+          MYSQL_DATABASE: ${{ env.DATABASE_NAME }}
           MYSQL_ALLOW_EMPTY_PASSWORD: true
         ports:
           - 3306:3306
@@ -31,10 +34,10 @@ jobs:
             if grep -q 'statement-breakpoint' "$file"; then
               tmp_file=$(mktemp)
               sed 's/--> statement-breakpoint//g' "$file" > "$tmp_file"
-              mysql -h 127.0.0.1 -u root tbls_demo_box < "$tmp_file" && echo "Applied $file" || exit 1
+              mysql -h 127.0.0.1 -u root ${{ env.DATABASE_NAME }} < "$tmp_file" && echo "Applied $file" || exit 1
               rm "$tmp_file"
             else
-              mysql -h 127.0.0.1 -u root tbls_demo_box < "$file" && echo "Applied $file" || exit 1
+              mysql -h 127.0.0.1 -u root ${{ env.DATABASE_NAME }} < "$file" && echo "Applied $file" || exit 1
             fi
           done
 
@@ -44,9 +47,7 @@ jobs:
 
       # Run tbls doc
       - name: Run tbls doc
-        env:
-          DATABASE: tbls_demo_box
-        run: tbls doc --force
+        run: tbls doc --force mysql://root@localhost:3306/${{ env.DATABASE_NAME }}
 
       - name: Pull pandoc/core Docker image
         run: docker pull pandoc/core
@@ -66,12 +67,23 @@ jobs:
       - name: Install Graphviz
         run: sudo apt-get install -y graphviz
 
-      - name: Run SchemaSpy
-        run: java -jar ./schemaspy-6.2.4.jar -configFile schemaspy.properties
-
       - name: Set tag name
         id: set_tag_name
-        run: echo "TAG_NAME=doc-push-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+        run: echo "TAG_NAME=docv-$(date +'%Y%m%d-%H%M%S')" >> $GITHUB_ENV
+
+      - name: Set execute permission for the script
+        run: chmod +x exec-schemaspy.sh
+      
+      - name: Run the script to generate SchemaSpy documentation
+        run: ./exec-schemaspy.sh ${{ env.TAG_NAME }}
+        env:
+          TAG_NAME: ${{ env.TAG_NAME }}
+          DATABASE_NAME: ${{ env.DATABASE_NAME }}
+          DATABASE_HOST: 'localhost'
+          DATABASE_PORT: '3306'
+          DATABASE_USER: 'root'
+          SCHEMASPY_OUTPUT_DIR: './docs/schemaspy-raw'
+          SCHEMASPY_DOT_PATH: '/opt/homebrew/bin/dot'
 
       - name: Update version in antora.yml
         run: |
@@ -82,7 +94,7 @@ jobs:
           git config --global user.name 'github-actions'
           git config --global user.email 'github-actions@github.com'
           git add .
-          git commit -m "Update doc version to docv.${{ env.TAG_NAME }}"
-          git tag docv.${{ env.TAG_NAME }}
-          git push origin ${{ github.ref_name }} docv.${{ env.TAG_NAME }}
+          git commit -m "Update doc version to ${{ env.TAG_NAME }}"
+          git tag ${{ env.TAG_NAME }}
+          git push origin ${{ github.ref_name }} ${{ env.TAG_NAME }}
           git push origin HEAD:${{ github.ref_name }}
