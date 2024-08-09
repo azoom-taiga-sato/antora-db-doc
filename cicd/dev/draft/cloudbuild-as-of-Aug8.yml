@@ -22,6 +22,16 @@ steps:
             rsync -av docs/schemaspy-raw/ "$version_dir/schemaspy/"
           fi
         done
+
+  - id: echo-output-directory
+    name: 'gcr.io/cloud-builders/gcloud'
+    waitFor: [create-schemaspy-index-file]
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        echo "Contents of output directory:"
+        ls -la outputs
         
   # Build the app image via DockerFile (Container Registry is used)
   - id: build-app-image

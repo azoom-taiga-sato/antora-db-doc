@@ -81,6 +81,12 @@ jobs:
         env:
           DB_NAME: ${{ env.DB_NAME }}
           TAG_NAME: ${{ env.TAG_NAME }}
+          DATABASE_HOST: 'localhost'
+          DATABASE_PORT: '3306'
+          DATABASE_USER: 'root'
+          DATABASE_PASSWORD: ''
+          SCHEMASPY_OUTPUT_DIR: './docs/schemaspy-raw'
+          SCHEMASPY_DOT_PATH: '/opt/homebrew/bin/dot'
 
       - name: Update version in antora.yml
         run: |
